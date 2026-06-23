@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>後台管理 · 有我在療癒所</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--canvas:#F4EFE7;--card:#FFFDF8;--ink:#241D16;--ink-soft:#6F6557;--line:#E7DDCC;--accent:#B07A45;--accent-d:#8C5E32;--green:#5E7355;--rose:#B23A48;--gold:#C2964E;--violet:#7C6B8F}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Noto Sans TC",system-ui,sans-serif;color:var(--ink);background:var(--canvas);line-height:1.6}
+.serif{font-family:"Noto Serif TC",serif}.mono{font-family:"JetBrains Mono",monospace}
+a{color:var(--accent)}
+.gate{max-width:360px;margin:70px auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px;text-align:center}
+.gate h1{font-family:"Noto Serif TC",serif;font-size:24px;margin-bottom:6px}
+.gate input{width:100%;padding:12px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;margin:8px 0;font-family:inherit}
+.btn-pri{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px 18px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;font-size:15px}
+.btn-pri:hover{background:var(--accent-d)}
+.top{background:var(--ink);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:20}
+.top .brand{font-family:"Noto Serif TC",serif;font-weight:700;font-size:18px}
+.top .who{font-size:12px;color:rgba(255,255,255,.6);margin-left:8px}
+.top .out{color:rgba(255,255,255,.8);font-size:13px;cursor:pointer;background:none;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:6px 12px;font-family:inherit}
+.tabs{display:flex;gap:2px;background:var(--card);border-bottom:1px solid var(--line);padding:0 8px;position:sticky;top:54px;z-index:19;overflow-x:auto}
+.tab{border:none;background:none;padding:14px 14px;font-size:14px;font-weight:700;color:var(--ink-soft);cursor:pointer;font-family:inherit;border-bottom:3px solid transparent;white-space:nowrap}
+.tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.wrap{max-width:960px;margin:0 auto;padding:20px 16px 70px}
+.sect-title{font-family:"Noto Serif TC",serif;font-size:20px;margin:4px 0 16px}
+.sub-title{font-family:"Noto Serif TC",serif;font-size:16px;margin:24px 0 12px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.stat .n{font-family:"Noto Serif TC",serif;font-weight:900;font-size:28px;line-height:1}
+.stat .l{font-size:12.5px;color:var(--ink-soft);margin-top:6px}
+.stat .delta{font-size:12px;font-weight:700;margin-top:4px}
+.stat .up{color:var(--green)}.stat .down{color:var(--rose)}
+.stat.warn .n{color:var(--gold)}.stat.rev .n{color:var(--green);font-size:23px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 17px;margin-bottom:11px}
+.card .ctop{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:7px}
+.svc{font-weight:700;font-size:15.5px}
+.badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap}
+.b-pending{background:rgba(194,150,78,.18);color:#8C6219}.b-confirmed{background:rgba(94,115,85,.15);color:var(--green)}
+.b-rejected,.b-cancelled{background:rgba(178,58,72,.12);color:var(--rose)}
+.meta{font-size:13px;color:var(--ink-soft);line-height:1.85}.meta b{color:var(--ink)}
+.tel{color:var(--accent);text-decoration:none}
+.acts{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.btn{border:none;border-radius:9px;padding:10px 14px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s}
+.btn-ok{background:var(--green);color:#fff}.btn-no{background:#fff;color:var(--rose);border:1.5px solid var(--rose)}
+.btn-cancel{background:#fff;color:var(--ink-soft);border:1.5px solid var(--line)}.btn[disabled]{opacity:.5;cursor:wait}
+.empty{text-align:center;color:var(--ink-soft);padding:36px;font-size:14px}
+.muted{color:var(--ink-soft);font-size:13px}
+.toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.toolbar input,.toolbar select{padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;font-size:14px;font-family:inherit;background:#fff}
+.toolbar input{flex:1;min-width:140px}
+.btn-add{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+/* table */
+.tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:13.5px}
+.tbl th{background:var(--ink);color:#fff;text-align:left;padding:10px 12px;font-weight:700}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--line)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl td.num{text-align:right;font-family:"JetBrains Mono";font-weight:700}
+/* bar chart */
+.chart{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.bar-row{display:flex;align-items:center;gap:10px;margin:8px 0}
+.bar-row .lab{width:64px;font-size:12px;color:var(--ink-soft);flex:none;text-align:right}
+.bar-track{flex:1;background:#F0EADF;border-radius:6px;height:22px;position:relative;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:6px;min-width:2px}
+.bar-row .val{width:90px;font-size:12px;font-family:"JetBrains Mono";font-weight:700;text-align:right;flex:none}
+/* calendar */
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-nav button{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:16px;margin-left:6px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-wd{text-align:center;font-size:11px;color:var(--ink-soft);font-weight:700;padding:4px 0}
+.cal-day{min-height:62px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:6px;cursor:pointer}
+.cal-day.empty{background:transparent;border:none;cursor:default}.cal-day.today{box-shadow:inset 0 0 0 2px var(--gold)}
+.cal-day.on{border-color:var(--accent);box-shadow:0 0 0 1.5px var(--accent)}
+.cal-day .d{font-family:"JetBrains Mono";font-weight:700;font-size:13px}
+.cal-day .cnt{margin-top:3px;font-size:11px;font-weight:700;color:var(--green)}
+.cal-day .pend{font-size:10px;color:var(--gold);font-weight:700}
+.cal-day.closed{background:repeating-linear-gradient(45deg,#F0EADF,#F0EADF 5px,#E7DDCC 5px,#E7DDCC 10px)}
+.set-block{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px}
+.set-block h3{font-size:15px;margin-bottom:14px}
+.hrow,.prow{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.hrow .wd{width:42px;font-weight:700}
+.hrow input[type=time]{padding:7px 9px;border:1.5px solid var(--line);border-radius:8px;font-family:inherit}
+.hrow label{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--ink-soft)}
+.prow .pn{flex:1}.prow input{width:110px;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;font-family:inherit;text-align:right}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{background:rgba(178,58,72,.1);color:var(--rose);border-radius:99px;padding:5px 12px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}.chip span{cursor:pointer}
+.save-bar{position:sticky;bottom:0;background:var(--canvas);padding:12px 0;margin-top:8px}
+.modal{position:fixed;inset:0;background:rgba(36,29,22,.5);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
+.modal.show{display:flex}
+.modal .box{background:var(--card);border-radius:18px;max-width:440px;width:100%;padding:24px;max-height:90vh;overflow:auto}
+.modal h3{font-family:"Noto Serif TC",serif;font-size:19px;margin-bottom:16px}
+.fld{display:block;font-size:13px;font-weight:700;margin:10px 0 5px}
+.modal input,.modal select,.modal textarea{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:9px;font-family:inherit;font-size:14px}
+.modal .row{display:flex;gap:10px}.modal .row>div{flex:1}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:99px;font-size:14px;opacity:0;transition:.3s;pointer-events:none;z-index:60}
+.toast.show{opacity:1}
+.hidden{display:none!important}
+/* 帳本 收支切換 */
+.seg{display:flex;gap:8px;margin-bottom:6px}
+.seg-btn{flex:1;padding:11px;border:1.5px solid var(--line);background:#fff;border-radius:10px;font-family:inherit;font-size:14px;font-weight:700;color:var(--ink-soft);cursor:pointer}
+.seg-btn.on[data-type=income]{background:var(--green);color:#fff;border-color:var(--green)}
+.seg-btn.on[data-type=expense]{background:var(--rose);color:#fff;border-color:var(--rose)}
+.amt-in{color:var(--green);font-weight:700}.amt-out{color:var(--rose);font-weight:700}
+.tbl td .lg-del{color:var(--rose);cursor:pointer;font-size:12px;border:none;background:none;font-family:inherit}
+.tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:#F0EADF;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+
+<div id="gate" class="gate">
+  <h1 class="serif">後台管理</h1>
+  <p class="muted" style="margin-bottom:6px">有我在療癒所</p>
+  <input id="user" placeholder="帳號（主帳號可留空）" autocomplete="username">
+  <input type="password" id="pass" placeholder="密碼" autocomplete="current-password" onkeydown="if(event.key==='Enter')enter(this)">
+  <button class="btn-pri" onclick="enter(this)">登入</button>
+  <p class="muted" id="gateErr" style="color:var(--rose);margin-top:10px"></p>
+</div>
+
+<div id="app" class="hidden">
+  <div class="top">
+    <span><span class="brand">有我在 · 後台</span><span class="who" id="who"></span></span>
+    <button class="out" onclick="logout()">登出</button>
+  </div>
+  <div class="tabs" id="tabs">
+    <button class="tab on" data-t="dash" onclick="go('dash')">總覽</button>
+    <button class="tab" data-t="report" onclick="go('report')">數據報表</button>
+    <button class="tab" data-t="cal" onclick="go('cal')">行事曆</button>
+    <button class="tab" data-t="book" onclick="go('book')">預約管理</button>
+    <button class="tab" data-t="ledger" onclick="go('ledger')">帳本</button>
+    <button class="tab admin-only" data-t="set" onclick="go('set')">設定</button>
+    <button class="tab admin-only" data-t="staff" onclick="go('staff')">人員管理</button>
+  </div>
+  <div class="wrap" id="view"></div>
+</div>
+
+<div class="modal" id="addModal"><div class="box">
+  <h3>手動新增預約</h3>
+  <label class="fld">服務</label><select id="mService"></select>
+  <div class="row"><div><label class="fld">日期</label><input type="date" id="mDate"></div><div><label class="fld">開始</label><input type="time" id="mStart" step="1800"></div></div>
+  <div class="row"><div><label class="fld">姓名</label><input id="mName" placeholder="客人姓名"></div><div><label class="fld">電話</label><input id="mPhone" placeholder="09xx-xxx-xxx"></div></div>
+  <label class="fld">備註</label><textarea id="mNote" rows="2" placeholder="選填"></textarea>
+  <div class="acts" style="margin-top:18px"><button class="btn btn-ok" style="flex:1" onclick="submitAdd(this)">新增（已確認）</button><button class="btn btn-cancel" onclick="closeM('addModal')">取消</button></div>
+</div></div>
+
+<div class="modal" id="userModal"><div class="box">
+  <h3>新增人員帳號</h3>
+  <label class="fld">姓名</label><input id="uName" placeholder="員工姓名">
+  <label class="fld">登入帳號</label><input id="uUser" placeholder="英數帳號">
+  <label class="fld">密碼</label><input id="uPass" placeholder="設定密碼">
+  <label class="fld">權限</label><select id="uRole"><option value="staff">員工（看/處理預約，不能改設定與人員）</option><option value="admin">管理員（全部權限）</option></select>
+  <div class="acts" style="margin-top:18px"><button class="btn btn-ok" style="flex:1" onclick="submitUser(this)">建立帳號</button><button class="btn btn-cancel" onclick="closeM('userModal')">取消</button></div>
+</div></div>
+
+<div class="modal" id="ledgerModal"><div class="box">
+  <h3 id="lgTitle">記一筆收支</h3>
+  <div class="seg" id="lgTypeSeg">
+    <button type="button" class="seg-btn on" data-type="income" onclick="lgSetType('income')">＋ 收入</button>
+    <button type="button" class="seg-btn" data-type="expense" onclick="lgSetType('expense')">－ 支出</button>
+  </div>
+  <div class="row"><div><label class="fld">日期</label><input type="date" id="lgDate"></div><div><label class="fld">金額（NT$）</label><input type="number" id="lgAmount" inputmode="numeric" placeholder="0"></div></div>
+  <label class="fld">分類</label><select id="lgCategory"></select>
+  <label class="fld">項目名稱</label><input id="lgItem" placeholder="例：精油補貨、頌缽教學費">
+  <label class="fld">付款方式</label><select id="lgMethod"><option value="現金">現金</option><option value="轉帳">轉帳</option><option value="LINE Pay">LINE Pay</option><option value="刷卡">刷卡</option><option value="其他">其他</option></select>
+  <label class="fld">備註</label><textarea id="lgNote" rows="2" placeholder="選填"></textarea>
+  <div class="acts" style="margin-top:18px"><button class="btn btn-ok" style="flex:1" onclick="submitLedger(this)">儲存</button><button class="btn btn-cancel" onclick="closeM('ledgerModal')">取消</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwGPAtLM51TuTa4hjOhU37gJ76yOEwxoNpdEf6MR5WrJaJy4W3shL2pNLqmx8iml5Yt/exec";
+const SERVICES=[{id:"bowl-solo",name:"單人頌缽",dur:120,price:2200},{id:"bowl-duo",name:"雙人頌缽",dur:120,price:4000},{id:"bowl-group",name:"團體聲浴",dur:90,price:800},{id:"heal-theta",name:"希塔療癒",dur:90,price:2200},{id:"heal-reiki",name:"臼井靈氣",dur:90,price:2200},{id:"diy-crystal",name:"水晶手作",dur:120,price:0},{id:"diy-candle",name:"療癒蠟燭",dur:120,price:0},{id:"diy-oil",name:"精油café",dur:120,price:0},{id:"rent-wk",name:"場地租借(平日)",dur:60,price:400},{id:"rent-we",name:"場地租借(假日)",dur:60,price:500}];
+const CATS={bowl:"頌缽音療",heal:"療癒",diy:"DIY手作",rent:"場地租借"};
+const WD=["日","一","二","三","四","五","六"];
+// 帳本分類
+const LG_CATS={income:["服務收入","商品販售","課程培訓","場地租借","其他收入"],expense:["進貨／材料","房租","水電雜費","薪資","行銷廣告","雜支","其他支出"]};
+let TOKEN="",ROLE="",NAME="",TAB="dash",BOOKINGS=[],LEDGER=[],CFG=null,calMonth=new Date();calMonth.setDate(1);
+let lgType="income",LG_FILTER="",lgMonth=new Date();lgMonth.setDate(1);
+const $=s=>document.querySelector(s);
+function toast(m){const t=$("#toast");t.textContent=m;t.className="toast show";setTimeout(()=>t.className="toast",2400);}
+const fmtNT=n=>"NT$"+Number(n||0).toLocaleString();
+const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const active=b=>b.status==='pending'||b.status==='confirmed';
+const catOf=b=>(String(b.service||'').split('-')[0])||'';
+
+async function enter(btn){
+  const username=$("#user").value.trim(),password=$("#pass").value;
+  if(!password){$("#gateErr").textContent="請輸入密碼";return;}
+  btn.disabled=true;btn.textContent="登入中…";
+  try{
+    const r=await post({action:"login",username,password});
+    if(!r.ok){$("#gateErr").textContent=r.error||"登入失敗";btn.disabled=false;btn.textContent="登入";return;}
+    TOKEN=r.token;ROLE=r.role;NAME=r.name;
+    localStorage.setItem('hb_tok',TOKEN);localStorage.setItem('hb_role',ROLE);localStorage.setItem('hb_name',NAME);
+    showApp();
+  }catch(e){$("#gateErr").textContent="連線失敗";btn.disabled=false;btn.textContent="登入";}
+}
+function showApp(){
+  $("#gate").classList.add('hidden');$("#app").classList.remove('hidden');
+  $("#who").textContent="｜"+NAME+"（"+(ROLE==='admin'?'管理員':'員工')+"）";
+  document.querySelectorAll('.admin-only').forEach(el=>el.style.display='');  // 不鎖權限，全部可見
+  loadAll();
+}
+function logout(){localStorage.clear();location.reload();}
+function go(t){TAB=t;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.t===t));render();}
+
+async function loadAll(){
+  $("#view").innerHTML='<div class="empty">載入中…</div>';
+  try{
+    const j=await (await fetch(`${API_URL}?action=list&key=${encodeURIComponent(TOKEN)}`)).json();
+    if(!j.ok){if(j.error==='unauthorized'){logout();return;}$("#view").innerHTML='<div class="empty">'+j.error+'</div>';return;}
+    BOOKINGS=j.bookings||[];
+    CFG=((await (await fetch(`${API_URL}?action=config`)).json()).config)||defaultConfig();
+    try{const lj=await(await fetch(`${API_URL}?action=ledger&key=${encodeURIComponent(TOKEN)}`)).json();LEDGER=lj.ok?(lj.entries||[]):[];}catch(e){LEDGER=[];}
+    render();
+  }catch(e){$("#view").innerHTML='<div class="empty">連線失敗：'+e.message+'</div>';}
+}
+function defaultConfig(){const h={};for(let i=0;i<7;i++)h[i]={open:"11:00",close:"20:00"};const p={};SERVICES.forEach(s=>p[s.id]=s.price);return{hours:h,prices:p,closedDates:[]};}
+function render(){({dash:renderDash,report:renderReport,cal:renderCal,book:renderBook,ledger:renderLedger,set:renderSet,staff:renderStaff}[TAB])();}
+
+/* ===== 總覽 ===== */
+function renderDash(){
+  const today=ymd(new Date());
+  const pending=BOOKINGS.filter(b=>b.status==='pending');
+  const todayList=BOOKINGS.filter(b=>active(b)&&b.date===today).sort((a,b)=>a.start<b.start?-1:1);
+  const ym=today.slice(0,7);
+  const monthConf=BOOKINGS.filter(b=>b.status==='confirmed'&&String(b.date).slice(0,7)===ym);
+  const rev=monthConf.reduce((s,b)=>s+Number(b.price||0),0);
+  const upcoming=BOOKINGS.filter(b=>b.status==='confirmed'&&b.date>today);
+  let h=`<div class="sect-title">總覽</div>
+  <div class="stats">
+    <div class="stat warn"><div class="n">${pending.length}</div><div class="l">待確認</div></div>
+    <div class="stat"><div class="n">${todayList.length}</div><div class="l">今日預約</div></div>
+    <div class="stat"><div class="n">${upcoming.length}</div><div class="l">未來已確認</div></div>
+    <div class="stat rev"><div class="n">${fmtNT(rev)}</div><div class="l">本月營收(已確認)</div></div>
+  </div>`;
+  if(pending.length)h+=`<div class="sub-title">⚠️ 待你確認（${pending.length}）</div>`+pending.map(cardHtml).join('');
+  h+=`<div class="sub-title">今日預約</div>`+(todayList.length?todayList.map(cardHtml).join(''):'<div class="empty">今天沒有預約</div>');
+  $("#view").innerHTML=h;bindActs();
+}
+
+/* ===== 數據報表 ===== */
+function renderReport(){
+  const today=new Date(),tStr=ymd(today),ym=tStr.slice(0,7);
+  const lastM=new Date(today.getFullYear(),today.getMonth()-1,1),lym=ymd(lastM).slice(0,7);
+  const conf=BOOKINGS.filter(b=>b.status==='confirmed');
+  const monthConf=conf.filter(b=>String(b.date).slice(0,7)===ym);
+  const lastConf=conf.filter(b=>String(b.date).slice(0,7)===lym);
+  const rev=arr=>arr.reduce((s,b)=>s+Number(b.price||0),0);
+  const realized=monthConf.filter(b=>b.date<=tStr),future=conf.filter(b=>b.date>tStr);
+  const mRev=rev(monthConf),lRev=rev(lastConf);
+  const delta=lRev?Math.round((mRev-lRev)/lRev*100):(mRev?100:0);
+  // 本月各狀態
+  const mAll=BOOKINGS.filter(b=>String(b.date).slice(0,7)===ym);
+  const cCount=mAll.filter(b=>b.status==='confirmed').length,xCount=mAll.filter(b=>b.status==='cancelled').length,rCount=mAll.filter(b=>b.status==='rejected').length,pCount=mAll.filter(b=>b.status==='pending').length;
+  const confRate=mAll.length?Math.round(cCount/mAll.length*100):0;
+  const cancelRate=(cCount+xCount)?Math.round(xCount/(cCount+xCount)*100):0;
+  const avg=monthConf.length?Math.round(mRev/monthConf.length):0;
+  const custMonth=new Set(monthConf.map(b=>b.phone||b.lineUserId)).size;
+  // 近6月營收
+  const months=[];for(let i=5;i>=0;i--){const d=new Date(today.getFullYear(),today.getMonth()-i,1);const k=ymd(d).slice(0,7);months.push({k,label:(d.getMonth()+1)+"月",v:rev(conf.filter(b=>String(b.date).slice(0,7)===k))});}
+  // 近8週預約數
+  const weeks=[];const mon0=new Date(today);mon0.setDate(today.getDate()-((today.getDay()+6)%7));
+  for(let i=7;i>=0;i--){const ws=new Date(mon0);ws.setDate(mon0.getDate()-i*7);const we=new Date(ws);we.setDate(ws.getDate()+6);const a=ymd(ws),z=ymd(we);weeks.push({label:(ws.getMonth()+1)+"/"+ws.getDate(),v:BOOKINGS.filter(b=>active(b)&&b.date>=a&&b.date<=z).length});}
+  // 服務排行(全期)
+  const svcMap={};conf.forEach(b=>{const k=b.serviceName||b.service;(svcMap[k]=svcMap[k]||{c:0,r:0});svcMap[k].c++;svcMap[k].r+=Number(b.price||0);});
+  const svcRank=Object.entries(svcMap).map(([k,v])=>({k,...v})).sort((a,b)=>b.r-a.r);
+  // 類別佔比(本月)
+  const catMap={};monthConf.forEach(b=>{const k=catOf(b);catMap[k]=(catMap[k]||0)+Number(b.price||0);});
+  // 時段熱度(全期 confirmed, by weekday)
+  const wdMap=[0,0,0,0,0,0,0];conf.forEach(b=>{const d=new Date(b.date+"T00:00:00");if(!isNaN(d))wdMap[d.getDay()]++;});
+  // 客戶
+  const allConfCust={};conf.forEach(b=>{const k=b.phone||b.lineUserId||b.name;if(!k)return;(allConfCust[k]=allConfCust[k]||{name:b.name,c:0,r:0});allConfCust[k].c++;allConfCust[k].r+=Number(b.price||0);});
+  const custArr=Object.values(allConfCust);const repeat=custArr.filter(c=>c.c>1).length;
+  const topCust=custArr.sort((a,b)=>b.r-a.r).slice(0,5);
+  const maxM=Math.max(1,...months.map(m=>m.v)),maxW=Math.max(1,...weeks.map(w=>w.v)),maxWd=Math.max(1,...wdMap);
+  // 帳本：本月手動收支（綜合損益用）
+  const lgMonthList=LEDGER.filter(e=>String(e.date).slice(0,7)===ym);
+  const lgIncome=lgMonthList.filter(e=>e.type==='income').reduce((s,e)=>s+Number(e.amount||0),0);
+  const lgExpense=lgMonthList.filter(e=>e.type==='expense').reduce((s,e)=>s+Number(e.amount||0),0);
+  const totalIncome=mRev+lgIncome, netProfit=totalIncome-lgExpense;
+
+  let h=`<div class="sect-title">數據報表</div>
+  <div class="stats">
+    <div class="stat rev"><div class="n">${fmtNT(mRev)}</div><div class="l">本月營收(已確認)</div><div class="delta ${delta>=0?'up':'down'}">${delta>=0?'▲':'▼'} ${Math.abs(delta)}% vs 上月</div></div>
+    <div class="stat"><div class="n">${fmtNT(rev(realized))}</div><div class="l">本月已實現(到今天)</div></div>
+    <div class="stat"><div class="n">${fmtNT(rev(future))}</div><div class="l">未來預估(已確認)</div></div>
+    <div class="stat"><div class="n">${fmtNT(avg)}</div><div class="l">平均客單價(本月)</div></div>
+    <div class="stat"><div class="n">${confRate}%</div><div class="l">本月確認率</div></div>
+    <div class="stat"><div class="n">${cancelRate}%</div><div class="l">取消率</div></div>
+    <div class="stat"><div class="n">${custMonth}</div><div class="l">本月不重複客</div></div>
+    <div class="stat"><div class="n">${repeat}</div><div class="l">回頭客(全期)</div></div>
+  </div>
+
+  <div class="sub-title">近 6 個月營收</div>
+  <div class="chart">${months.map(m=>barRow(m.label,m.v,maxM,fmtNT(m.v))).join('')}</div>
+
+  <div class="sub-title">近 8 週預約數</div>
+  <div class="chart">${weeks.map(w=>barRow(w.label,w.v,maxW,w.v+' 筆')).join('')}</div>
+
+  <div class="sub-title">服務人氣 / 營收排行（全期已確認）</div>
+  <table class="tbl"><tr><th>服務</th><th>次數</th><th>營收</th></tr>
+  ${svcRank.length?svcRank.map(s=>`<tr><td>${s.k}</td><td class="num">${s.c}</td><td class="num">${fmtNT(s.r)}</td></tr>`).join(''):'<tr><td colspan=3 style="text-align:center;color:var(--ink-soft)">尚無資料</td></tr>'}</table>
+
+  <div class="sub-title">本月各類別營收佔比</div>
+  <div class="chart">${Object.keys(CATS).map(c=>{const v=catMap[c]||0;const pct=mRev?Math.round(v/mRev*100):0;return barRow(CATS[c],v,Math.max(1,mRev),fmtNT(v)+' ('+pct+'%)');}).join('')}</div>
+
+  <div class="sub-title">星期熱度（全期已確認筆數）</div>
+  <div class="chart">${wdMap.map((v,i)=>barRow('週'+WD[i],v,maxWd,v+' 筆')).join('')}</div>
+
+  <div class="sub-title">本月各狀態</div>
+  <table class="tbl"><tr><th>已確認</th><th>待確認</th><th>已取消</th><th>已婉拒</th></tr>
+  <tr><td class="num">${cCount}</td><td class="num">${pCount}</td><td class="num">${xCount}</td><td class="num">${rCount}</td></tr></table>
+
+  <div class="sub-title">消費排行 Top 5（全期）</div>
+  <table class="tbl"><tr><th>客戶</th><th>次數</th><th>累計消費</th></tr>
+  ${topCust.length?topCust.map(c=>`<tr><td>${c.name||'-'}</td><td class="num">${c.c}</td><td class="num">${fmtNT(c.r)}</td></tr>`).join(''):'<tr><td colspan=3 style="text-align:center;color:var(--ink-soft)">尚無資料</td></tr>'}</table>
+
+  <div class="sub-title">本月綜合損益</div>
+  <table class="tbl">
+    <tr><td>預約收入（本月已確認）</td><td class="num amt-in">+${fmtNT(mRev)}</td></tr>
+    <tr><td>手動收入（帳本）</td><td class="num amt-in">+${fmtNT(lgIncome)}</td></tr>
+    <tr><td><b>收入合計</b></td><td class="num"><b>${fmtNT(totalIncome)}</b></td></tr>
+    <tr><td>手動支出（帳本）</td><td class="num amt-out">−${fmtNT(lgExpense)}</td></tr>
+    <tr><td><b>淨利（收入合計 − 支出）</b></td><td class="num"><b style="color:${netProfit>=0?'var(--green)':'var(--rose)'}">${fmtNT(netProfit)}</b></td></tr>
+  </table>
+  <p class="muted" style="margin-top:8px">收入＝已確認預約 ＋ 帳本手動收入；支出與額外收入請到「帳本」分頁建檔。</p>
+
+  <div style="margin-top:24px"><button class="btn-add" onclick="exportCSV()">⬇ 匯出全部預約 CSV（記帳/報稅用）</button></div>
+  <p class="muted" style="margin-top:10px">預約營收以「已確認」計算；完整損益已納入帳本的手動收支。收款狀態待 LINE Pay 串接後自動帶入。</p>`;
+  $("#view").innerHTML=h;
+}
+function barRow(lab,v,max,valTxt){const w=Math.round(v/max*100);return `<div class="bar-row"><span class="lab">${lab}</span><div class="bar-track"><div class="bar-fill" style="width:${w}%"></div></div><span class="val">${valTxt}</span></div>`;}
+function exportCSV(){
+  const cols=['id','created_at','status','serviceName','date','start','end','duration','ppl','price','name','phone','note','lineName'];
+  const head=['編號','建立時間','狀態','服務','日期','開始','結束','時長','人數','金額','姓名','電話','備註','LINE'];
+  const esc=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  let csv='﻿'+head.join(',')+'\n';
+  BOOKINGS.slice().sort((a,b)=>a.date<b.date?-1:1).forEach(b=>csv+=cols.map(c=>esc(b[c])).join(',')+'\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='有我在預約_'+ymd(new Date())+'.csv';a.click();
+}
+
+/* ===== 行事曆 ===== */
+let calSel=null;
+function renderCal(){
+  const y=calMonth.getFullYear(),m=calMonth.getMonth();
+  const start=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate(),today=ymd(new Date());
+  const byDay={};BOOKINGS.filter(active).forEach(b=>{(byDay[b.date]=byDay[b.date]||[]).push(b);});
+  let cells="";for(let i=0;i<start;i++)cells+='<div class="cal-day empty"></div>';
+  for(let d=1;d<=dim;d++){const ds=`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const list=byDay[ds]||[],conf=list.filter(b=>b.status==='confirmed').length,pend=list.filter(b=>b.status==='pending').length;
+    const closed=CFG&&CFG.closedDates&&CFG.closedDates.includes(ds);
+    const cls=["cal-day"];if(ds===today)cls.push("today");if(calSel===ds)cls.push("on");if(closed)cls.push("closed");
+    cells+=`<div class="${cls.join(' ')}" data-d="${ds}"><div class="d">${d}</div>${conf?`<div class="cnt">${conf} 約</div>`:''}${pend?`<div class="pend">${pend} 待</div>`:''}</div>`;}
+  $("#view").innerHTML=`<div class="sect-title">行事曆</div>
+  <div class="cal-head"><b>${y} 年 ${m+1} 月</b><span class="cal-nav"><button onclick="moveMonth(-1)">‹</button><button onclick="moveMonth(1)">›</button></span></div>
+  <div class="cal-grid">${WD.map(w=>`<div class="cal-wd">${w}</div>`).join('')}</div>
+  <div class="cal-grid" style="margin-top:5px">${cells}</div><div id="dayList" style="margin-top:18px"></div>`;
+  document.querySelectorAll('.cal-day[data-d]').forEach(el=>el.onclick=()=>{calSel=el.dataset.d;renderCal();showDay(el.dataset.d);});
+  if(calSel)showDay(calSel);
+}
+function moveMonth(n){calMonth.setMonth(calMonth.getMonth()+n);renderCal();}
+function showDay(ds){const list=BOOKINGS.filter(b=>active(b)&&b.date===ds).sort((a,b)=>a.start<b.start?-1:1);$("#dayList").innerHTML=`<div class="sub-title">${ds}（${list.length}）</div>`+(list.length?list.map(cardHtml).join(''):'<div class="empty">這天沒有預約</div>');bindActs();}
+
+/* ===== 預約管理 ===== */
+function renderBook(){
+  $("#view").innerHTML=`<div class="sect-title">預約管理</div>
+  <div class="toolbar"><input id="q" placeholder="搜尋姓名 / 電話" oninput="renderBookList()">
+  <select id="fStatus" onchange="renderBookList()"><option value="">全部狀態</option><option value="pending">待確認</option><option value="confirmed">已確認</option><option value="cancelled">已取消</option><option value="rejected">已婉拒</option></select>
+  <button class="btn-add" onclick="openAdd()">＋ 手動新增</button></div><div id="bookList"></div>`;
+  renderBookList();
+}
+function renderBookList(){
+  const q=($("#q").value||"").trim(),fs=$("#fStatus").value;
+  let list=BOOKINGS.slice().sort((a,b)=>(b.date+b.start<a.date+a.start?-1:1));
+  if(fs)list=list.filter(b=>b.status===fs);
+  if(q)list=list.filter(b=>(b.name||'').includes(q)||String(b.phone||'').includes(q));
+  $("#bookList").innerHTML=list.length?list.map(cardHtml).join(''):'<div class="empty">沒有符合的預約</div>';bindActs();
+}
+
+/* ===== 帳本（手動收支 POS）===== */
+function lgMonthKey(){return ymd(lgMonth).slice(0,7);}
+function renderLedger(){
+  const ym=lgMonthKey();
+  const mList=LEDGER.filter(e=>String(e.date).slice(0,7)===ym);
+  const income=mList.filter(e=>e.type==='income').reduce((s,e)=>s+Number(e.amount||0),0);
+  const expense=mList.filter(e=>e.type==='expense').reduce((s,e)=>s+Number(e.amount||0),0);
+  const net=income-expense;
+  // 本月支出分類佔比
+  const expCat={};mList.filter(e=>e.type==='expense').forEach(e=>{const k=e.category||'其他支出';expCat[k]=(expCat[k]||0)+Number(e.amount||0);});
+  const expRank=Object.entries(expCat).sort((a,b)=>b[1]-a[1]);
+  const maxExp=Math.max(1,...expRank.map(x=>x[1]));
+  // 篩選後列表
+  let h=`<div class="sect-title">帳本</div>
+  <div class="cal-head"><b>${lgMonth.getFullYear()} 年 ${lgMonth.getMonth()+1} 月</b><span class="cal-nav"><button onclick="moveLgMonth(-1)">‹</button><button onclick="moveLgMonth(1)">›</button></span></div>
+  <div class="stats">
+    <div class="stat rev"><div class="n">${fmtNT(income)}</div><div class="l">本月手動收入</div></div>
+    <div class="stat warn"><div class="n" style="color:var(--rose)">${fmtNT(expense)}</div><div class="l">本月支出</div></div>
+    <div class="stat"><div class="n" style="color:${net>=0?'var(--green)':'var(--rose)'}">${fmtNT(net)}</div><div class="l">本月結餘（收−支）</div></div>
+  </div>
+  <div class="toolbar">
+    <button class="btn-add" style="background:var(--green)" onclick="openLedger('income')">＋ 記收入</button>
+    <button class="btn-add" style="background:var(--rose)" onclick="openLedger('expense')">－ 記支出</button>
+    <select id="lgFilter" onchange="LG_FILTER=this.value;renderLedger()"><option value="">全部</option><option value="income"${LG_FILTER==='income'?' selected':''}>只看收入</option><option value="expense"${LG_FILTER==='expense'?' selected':''}>只看支出</option></select>
+    <button class="btn-add" style="background:var(--ink)" onclick="exportLedgerCSV()">⬇ 匯出 CSV</button>
+  </div>`;
+  let list=mList.slice();
+  if(LG_FILTER)list=list.filter(e=>e.type===LG_FILTER);
+  h+=`<table class="tbl"><tr><th>日期</th><th>分類</th><th>項目</th><th>付款</th><th>金額</th><th></th></tr>`+
+    (list.length?list.map(e=>`<tr>
+      <td class="mono">${String(e.date).slice(5)}</td>
+      <td><span class="tag">${e.type==='income'?'收':'支'}</span> ${e.category||''}</td>
+      <td>${e.item||'-'}${e.note?'<br><span class="muted" style="font-size:12px">'+e.note+'</span>':''}</td>
+      <td class="muted">${e.method||'-'}</td>
+      <td class="num ${e.type==='income'?'amt-in':'amt-out'}">${e.type==='income'?'+':'−'}${fmtNT(e.amount).replace('NT$','')}</td>
+      <td><button class="lg-del" onclick="delLedgerEntry('${e.id}',this)">刪</button></td></tr>`).join('')
+    :`<tr><td colspan=6 style="text-align:center;color:var(--ink-soft);padding:24px">這個月還沒有帳目，點上面「記收入／記支出」開始</td></tr>`)+`</table>`;
+  if(expRank.length){
+    h+=`<div class="sub-title">本月支出分類</div><div class="chart">${expRank.map(([k,v])=>barRow(k,v,maxExp,fmtNT(v))).join('')}</div>`;
+  }
+  h+=`<p class="muted" style="margin-top:14px">此帳本記的是「手動收支」。完整損益（含預約收入）請看「數據報表」最下方的綜合損益。</p>`;
+  $("#view").innerHTML=h;
+}
+function moveLgMonth(n){lgMonth.setMonth(lgMonth.getMonth()+n);renderLedger();}
+function openLedger(type){
+  lgType=type;lgSetType(type);
+  $("#lgDate").value=ymd(new Date());$("#lgAmount").value="";$("#lgItem").value="";$("#lgNote").value="";$("#lgMethod").value="現金";
+  $("#ledgerModal").classList.add('show');
+}
+function lgSetType(type){
+  lgType=type;
+  document.querySelectorAll('#lgTypeSeg .seg-btn').forEach(b=>b.classList.toggle('on',b.dataset.type===type));
+  $("#lgTitle").textContent=type==='income'?'記一筆收入':'記一筆支出';
+  $("#lgCategory").innerHTML=LG_CATS[type].map(c=>`<option value="${c}">${c}</option>`).join('');
+}
+async function submitLedger(btn){
+  const date=$("#lgDate").value,amount=Number($("#lgAmount").value||0);
+  if(!date||!amount){toast("請填日期與金額");return;}
+  btn.disabled=true;btn.textContent="儲存中…";
+  const entry={date,amount,type:lgType,category:$("#lgCategory").value,item:$("#lgItem").value.trim(),method:$("#lgMethod").value,note:$("#lgNote").value.trim()};
+  try{const r=await post({action:"addledger",key:TOKEN,entry});
+    if(r.ok){toast("已記帳 ✅");closeM('ledgerModal');await loadAll();}else toast("失敗："+r.error);
+  }catch(e){toast("連線失敗");}
+  btn.disabled=false;btn.textContent="儲存";
+}
+async function delLedgerEntry(id,btn){
+  if(!confirm('確定刪除這筆帳目？'))return;btn.disabled=true;
+  try{const r=await post({action:"delledger",key:TOKEN,id});
+    if(r.ok){toast("已刪除");await loadAll();}else{toast("失敗："+r.error);btn.disabled=false;}
+  }catch(e){toast("連線失敗");btn.disabled=false;}
+}
+function exportLedgerCSV(){
+  const cols=['date','type','category','item','method','amount','note','by','created_at'];
+  const head=['日期','類型','分類','項目','付款方式','金額','備註','操作人','建立時間'];
+  const tx=t=>t==='income'?'收入':'支出';
+  const esc=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  let csv='﻿'+head.join(',')+'\n';
+  LEDGER.slice().sort((a,b)=>a.date<b.date?-1:1).forEach(e=>csv+=cols.map(c=>esc(c==='type'?tx(e.type):e[c])).join(',')+'\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='有我在帳本_'+ymd(new Date())+'.csv';a.click();
+}
+
+/* ===== 設定 ===== */
+function renderSet(){
+  const h=CFG.hours||defaultConfig().hours,prices=CFG.prices||{},closed=CFG.closedDates||[];
+  let hoursHtml="";for(let i=0;i<7;i++){const d=h[i],off=!d;hoursHtml+=`<div class="hrow"><span class="wd">週${WD[i]}</span><label><input type="checkbox" data-off="${i}" ${off?'checked':''} onchange="toggleOff(${i},this.checked)"> 公休</label><input type="time" step="1800" data-open="${i}" value="${off?'11:00':d.open}" ${off?'disabled':''}><span>–</span><input type="time" step="1800" data-close="${i}" value="${off?'20:00':d.close}" ${off?'disabled':''}></div>`;}
+  let priceHtml=SERVICES.map(s=>`<div class="prow"><span class="pn">${s.name} <small style="color:var(--ink-soft)">${s.dur}分</small></span><input type="number" data-price="${s.id}" value="${prices[s.id]!=null?prices[s.id]:s.price}" placeholder="0=洽詢"></div>`).join('');
+  let chips=closed.map(d=>`<span class="chip">${d}<span onclick="rmClosed('${d}')">✕</span></span>`).join('');
+  $("#view").innerHTML=`<div class="sect-title">設定</div>
+    <div class="set-block"><h3>🕐 營業時間</h3>${hoursHtml}</div>
+    <div class="set-block"><h3>💰 服務價格（0＝顯示「洽詢」）</h3>${priceHtml}</div>
+    <div class="set-block"><h3>🚫 公休 / 封鎖日</h3><div style="display:flex;gap:8px"><input type="date" id="closedDate" style="padding:9px;border:1.5px solid var(--line);border-radius:9px;font-family:inherit"><button class="btn-add" onclick="addClosed()">加入</button></div><div class="chips" id="chips">${chips||'<span class="muted">尚無</span>'}</div></div>
+    <div class="save-bar"><button class="btn-pri" onclick="saveSet(this)">儲存設定（即時套用到預約頁）</button></div>`;
+}
+function toggleOff(i,off){$(`[data-open="${i}"]`).disabled=off;$(`[data-close="${i}"]`).disabled=off;}
+function addClosed(){const v=$("#closedDate").value;if(!v)return;CFG.closedDates=CFG.closedDates||[];if(!CFG.closedDates.includes(v)){CFG.closedDates.push(v);CFG.closedDates.sort();}renderSet();}
+function rmClosed(d){CFG.closedDates=(CFG.closedDates||[]).filter(x=>x!==d);renderSet();}
+async function saveSet(btn){
+  const hours={};for(let i=0;i<7;i++){const off=$(`[data-off="${i}"]`).checked;hours[i]=off?null:{open:$(`[data-open="${i}"]`).value,close:$(`[data-close="${i}"]`).value};}
+  const prices={};SERVICES.forEach(s=>prices[s.id]=Number($(`[data-price="${s.id}"]`).value||0));
+  CFG.hours=hours;CFG.prices=prices;btn.disabled=true;btn.textContent="儲存中…";
+  try{const r=await post({action:"saveconfig",key:TOKEN,config:CFG});toast(r.ok?"已儲存，預約頁即時生效 ✅":"失敗："+r.error);}catch(e){toast("連線失敗");}
+  btn.disabled=false;btn.textContent="儲存設定（即時套用到預約頁）";
+}
+
+/* ===== 人員管理 ===== */
+async function renderStaff(){
+  $("#view").innerHTML=`<div class="sect-title">人員管理</div><div class="toolbar"><button class="btn-add" onclick="openUser()">＋ 新增人員</button></div><div id="staffList"><div class="empty">載入中…</div></div>`;
+  try{const j=await(await fetch(`${API_URL}?action=users&key=${encodeURIComponent(TOKEN)}`)).json();
+    if(!j.ok){$("#staffList").innerHTML='<div class="empty">'+j.error+'</div>';return;}
+    const list=j.users||[];
+    $("#staffList").innerHTML=`<div class="card"><div class="meta">🔑 <b>主帳號（管理員）</b>　用原本密碼登入,最高權限,不可刪除</div></div>`+
+      (list.length?list.map(u=>`<div class="card"><div class="ctop"><span class="svc">${u.name}</span><span class="badge ${u.role==='admin'?'b-confirmed':'b-pending'}">${u.role==='admin'?'管理員':'員工'}</span></div><div class="meta">帳號：<b>${u.username}</b>　建立：${u.created_at||'-'}</div><div class="acts"><button class="btn btn-no" onclick="delUser('${u.username}',this)">刪除帳號</button></div></div>`).join(''):'<div class="empty">還沒有其他人員帳號</div>');
+  }catch(e){$("#staffList").innerHTML='<div class="empty">連線失敗</div>';}
+}
+function openUser(){$("#uName").value="";$("#uUser").value="";$("#uPass").value="";$("#uRole").value="staff";$("#userModal").classList.add('show');}
+async function submitUser(btn){
+  const name=$("#uName").value.trim(),username=$("#uUser").value.trim(),password=$("#uPass").value,role=$("#uRole").value;
+  if(!name||!username||!password){toast("請填姓名/帳號/密碼");return;}
+  btn.disabled=true;btn.textContent="建立中…";
+  const r=await post({action:"adduser",key:TOKEN,username,password,role,name});
+  btn.disabled=false;btn.textContent="建立帳號";
+  if(r.ok){toast("已建立 ✅");closeM('userModal');renderStaff();}else toast("失敗："+r.error);
+}
+async function delUser(username,btn){
+  if(!confirm('確定刪除帳號 '+username+'？'))return;btn.disabled=true;
+  const r=await post({action:"deluser",key:TOKEN,username});
+  if(r.ok){toast("已刪除");renderStaff();}else{toast("失敗："+r.error);btn.disabled=false;}
+}
+
+/* ===== 共用 ===== */
+function cardHtml(b){
+  const badge={pending:['b-pending','待確認'],confirmed:['b-confirmed','已確認'],rejected:['b-rejected','已婉拒'],cancelled:['b-cancelled','已取消']}[b.status]||['b-pending',b.status];
+  let acts='';
+  if(b.status==='pending')acts=`<button class="btn btn-ok" data-act="approve" data-id="${b.id}">✓ 同意</button><button class="btn btn-no" data-act="reject" data-id="${b.id}">婉拒</button>`;
+  else if(b.status==='confirmed')acts=`<button class="btn btn-cancel" data-act="cancel" data-id="${b.id}">取消預約</button>`;
+  return `<div class="card"><div class="ctop"><span class="svc">${b.serviceName||b.service}</span><span class="badge ${badge[0]}">${badge[1]}</span></div>
+    <div class="meta">📅 <b>${b.date} ${b.start}${b.end?'–'+b.end:''}</b>${b.duration?'（'+b.duration+'分）':''}<br>
+    👤 <b>${b.name}</b>　📞 <a class="tel" href="tel:${b.phone}">${b.phone||'-'}</a>${b.ppl>1?'　👥'+b.ppl+'人':''}<br>
+    💰 ${b.price?fmtNT(b.price):'洽詢'}${b.lineName?'　· LINE：'+b.lineName:''}${b.note?'<br>📝 '+b.note:''}</div>
+    ${acts?'<div class="acts">'+acts+'</div>':''}</div>`;
+}
+function bindActs(){
+  document.querySelectorAll('[data-act]').forEach(btn=>btn.onclick=async()=>{
+    const act=btn.dataset.act,id=btn.dataset.id;
+    if(act==='reject'&&!confirm('確定婉拒？會通知客人改約'))return;
+    if(act==='cancel'&&!confirm('確定取消這筆預約？會通知客人'))return;
+    btn.disabled=true;const r=await post({action:act,id,key:TOKEN});
+    if(r.ok){toast(act==='approve'?'已同意，已推播客人 ✅':act==='cancel'?'已取消':'已婉拒');await loadAll();}else{toast('失敗：'+r.error);btn.disabled=false;}
+  });
+}
+function openAdd(){$("#mService").innerHTML=SERVICES.map(s=>`<option value="${s.id}">${s.name}（${s.dur}分）</option>`).join('');$("#mDate").value=ymd(new Date());$("#mStart").value="14:00";$("#mName").value="";$("#mPhone").value="";$("#mNote").value="";$("#addModal").classList.add('show');}
+function closeM(id){$("#"+id).classList.remove('show');}
+async function submitAdd(btn){
+  const s=SERVICES.find(x=>x.id===$("#mService").value),date=$("#mDate").value,start=$("#mStart").value,name=$("#mName").value.trim();
+  if(!date||!start||!name){toast("請填日期/時段/姓名");return;}
+  const [hh,mm]=start.split(':').map(Number),em=hh*60+mm+s.dur,end=`${String(Math.floor(em/60)).padStart(2,"0")}:${String(em%60).padStart(2,"0")}`;
+  btn.disabled=true;btn.textContent="新增中…";
+  const r=await post({action:"manualadd",key:TOKEN,service:s.id,serviceName:s.name,date,start,end,duration:s.dur,price:(CFG.prices&&CFG.prices[s.id]!=null?CFG.prices[s.id]:s.price),name,phone:$("#mPhone").value.trim(),note:$("#mNote").value.trim()});
+  btn.disabled=false;btn.textContent="新增（已確認）";
+  if(r.ok){toast("已新增 ✅");closeM('addModal');await loadAll();}else toast("失敗："+r.error);
+}
+async function post(body){const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)});return r.json();}
+// 自動登入
+(function(){const t=localStorage.getItem('hb_tok');if(t){TOKEN=t;ROLE=localStorage.getItem('hb_role')||'staff';NAME=localStorage.getItem('hb_name')||'';showApp();}})();
+</script>
+</body>
+</html>

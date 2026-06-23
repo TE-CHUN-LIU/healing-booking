@@ -1,0 +1,4 @@
+.vercel
+.DS_Store
+# 含 LINE token / 後台密碼，只留本機，永不進 git
+backend/

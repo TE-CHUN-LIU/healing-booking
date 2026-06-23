@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I'm here 有我在療癒所 · 預約</title>
+<meta name="description" content="頌缽音療、希塔療癒、靈氣、水晶手作——線上預約你的療癒時段。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<!-- LIFF SDK -->
+<script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<style>
+/* ============================================================
+   I'm here 有我在療癒所 · 預約　|　Warm Healing Editorial
+   配色取自實景：銅缽金 / 暖木棕 / 霧灰綠 / 骨白 / 一抹療癒紫
+   版型沿用一水智域預約系統（得群既有作品）
+   ============================================================ */
+:root{
+  --canvas:#F4EFE7; --card:#FFFDF8; --ink:#241D16; --ink-soft:#6F6557;
+  --line:#E7DDCC; --accent:#B07A45; --accent-d:#8C5E32;  /* 銅缽金 */
+  --sage:#5E6F62; --oak:#B07A45; --gold:#C2964E;
+  --violet:#7C6B8F;  /* 療癒紫，用於療癒類 */
+  --rose:#B23A48; --green:#5E7355;
+  --radius:18px;
+  --shadow:0 2px 6px rgba(36,29,22,.05), 0 26px 60px -24px rgba(36,29,22,.28);
+  --shadow-sm:0 1px 3px rgba(36,29,22,.06), 0 10px 26px -14px rgba(36,29,22,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:"Noto Sans TC",system-ui,sans-serif;color:var(--ink);background:var(--canvas);line-height:1.6;overflow-x:hidden}
+.serif{font-family:"Fraunces","Noto Serif TC",serif}
+.mono{font-family:"JetBrains Mono",monospace}
+
+/* HERO */
+.hero{position:relative;min-height:78vh;display:flex;flex-direction:column;justify-content:space-between;color:#fff;overflow:hidden;padding:26px 26px 60px}
+.hero-photo{position:absolute;inset:0;background-size:cover;background-position:50% 50%;transform:scale(1.04);animation:slowzoom 18s ease-out forwards}
+@keyframes slowzoom{to{transform:scale(1)}}
+.hero-scrim{position:absolute;inset:0;background:linear-gradient(to top,rgba(28,20,13,.84) 0%,rgba(28,20,13,.30) 40%,rgba(28,20,13,.14) 66%,rgba(28,20,13,.30) 100%)}
+.hero-top,.hero-content{position:relative;z-index:2}
+.hero-top{display:flex;align-items:center;justify-content:space-between;gap:14px;opacity:0;animation:up .9s .1s both}
+.bm{display:inline-flex;align-items:center;gap:11px}
+.bm-logo{width:40px;height:40px;border-radius:11px;object-fit:cover;background:#fff;box-shadow:0 6px 18px rgba(140,94,50,.4)}
+.bm-txt{font-weight:700;letter-spacing:2px;font-size:12px;color:rgba(255,255,255,.85)}
+.hero-nav{color:#fff;text-decoration:none;font-weight:700;font-size:14px;letter-spacing:1px;border:1px solid rgba(255,255,255,.4);border-radius:99px;padding:9px 18px;transition:.2s}
+.hero-nav:hover{background:#fff;color:var(--ink)}
+.hero-content{max-width:760px;margin-top:auto}
+.eyebrow{display:inline-block;font-size:11.5px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.82);margin-bottom:18px;opacity:0;animation:up .9s .25s both}
+.hero h1{font-weight:500;font-size:clamp(40px,8vw,76px);line-height:1.02;letter-spacing:-.5px;margin-bottom:18px}
+.hero h1 span{display:block;opacity:0;animation:up 1s both}
+.hero h1 span:nth-child(1){animation-delay:.38s}
+.hero h1 span:nth-child(2){animation-delay:.5s;font-style:italic;font-weight:400;color:#F0D9BE}
+.hero .sub{font-size:clamp(15px,2.3vw,18px);color:rgba(255,255,255,.9);max-width:520px;margin-bottom:30px;opacity:0;animation:up 1s .64s both;text-shadow:0 1px 12px rgba(0,0,0,.3)}
+.cta{display:inline-flex;align-items:center;gap:11px;background:var(--accent);color:#fff;font-weight:700;font-size:15.5px;border:none;border-radius:99px;padding:15px 28px;cursor:pointer;text-decoration:none;opacity:0;animation:up 1s .78s both;transition:.2s}
+.cta:hover{background:var(--accent-d);transform:translateY(-2px);box-shadow:0 14px 30px -8px rgba(140,94,50,.6)}
+.cta .dot{width:7px;height:7px;border-radius:50%;background:#fff;opacity:.9}
+@keyframes up{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+
+/* TOAST */
+.toast{position:fixed;left:50%;transform:translateX(-50%) translateY(16px);bottom:92px;z-index:70;background:var(--ink);color:#fff;font-size:14px;font-weight:500;padding:13px 22px;border-radius:99px;box-shadow:0 18px 40px -10px rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:.35s;max-width:92vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{background:var(--green)}
+
+/* SHELL */
+.shell{position:relative;z-index:5;max-width:1080px;margin:-46px auto 0;padding:0 18px 90px}
+.shell-top{background:var(--canvas);border-radius:26px 26px 0 0;height:46px;margin:0 -18px}
+.stepper{display:flex;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:9px 14px;box-shadow:var(--shadow-sm);max-width:620px;margin:0 auto 26px;overflow-x:auto}
+.stepper .st{display:flex;align-items:center;gap:9px;flex:1;min-width:0;padding:4px 6px}
+.stepper .sd{width:26px;height:26px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12.5px;font-weight:700;background:#EFE8DB;color:#A99B85;transition:.3s;font-family:"JetBrains Mono"}
+.stepper .sl{font-size:13px;font-weight:700;color:#A99B85;white-space:nowrap;transition:.3s}
+.stepper .st.on .sd{background:var(--accent);color:#fff;box-shadow:0 5px 12px rgba(176,122,69,.4)}
+.stepper .st.on .sl{color:var(--ink)}
+.stepper .st.done .sd{background:var(--green);color:#fff}
+.stepper .bar{flex:0 0 16px;height:2px;background:#E7DDCC;border-radius:2px}
+@media(max-width:560px){.stepper .sl{display:none}.stepper .bar{flex-basis:8px}}
+
+.layout{display:grid;grid-template-columns:1fr 330px;gap:20px;align-items:start}
+@media(max-width:900px){.layout{grid-template-columns:1fr}}
+.main{display:flex;flex-direction:column;gap:18px;min-width:0}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-sm)}
+.p-head{display:flex;align-items:center;gap:13px;margin-bottom:20px}
+.p-num{width:30px;height:30px;border-radius:9px;flex:none;display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px;font-family:"JetBrains Mono"}
+.p-title{font-family:"Fraunces","Noto Serif TC",serif;font-weight:500;font-size:22px}
+.p-hint{font-size:12.5px;color:var(--ink-soft);margin-left:auto;text-align:right}
+.main .panel:nth-of-type(1) .p-num{background:var(--accent)}
+.main .panel:nth-of-type(2) .p-num{background:var(--sage)}
+.main .panel:nth-of-type(3) .p-num{background:var(--oak)}
+.main .panel:nth-of-type(4) .p-num{background:var(--gold);color:#4a3508}
+
+/* category tabs */
+.cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.cat{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:8px 16px;font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s;font-family:inherit;color:var(--ink-soft)}
+.cat:hover{border-color:var(--accent)}
+.cat.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* service cards */
+.services{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:560px){.services{grid-template-columns:1fr}}
+.svc{position:relative;text-align:left;cursor:pointer;border:1.5px solid var(--line);background:#fff;border-radius:15px;padding:0 0 16px;transition:.2s;overflow:hidden}
+.svc:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm);border-color:var(--accent)}
+.svc.on{border-color:var(--accent);box-shadow:0 0 0 1.5px var(--accent)}
+.svc.on::after{content:"✓";position:absolute;top:12px;right:14px;color:#fff;font-weight:900;width:26px;height:26px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-size:14px;box-shadow:0 4px 10px rgba(0,0,0,.25)}
+.svc-img{height:130px;background-size:cover;background-position:center;background-color:#E7DDCC}
+.svc-body{padding:14px 16px 0}
+.svc-name{font-weight:700;font-size:16.5px;margin-bottom:6px}
+.svc-meta{font-size:12.5px;color:var(--ink-soft);margin-bottom:10px}
+.svc-desc{font-size:13px;color:var(--ink-soft);line-height:1.6;margin-bottom:12px}
+.svc-rate{font-family:"JetBrains Mono";font-weight:700;font-size:16px;color:var(--ink)}
+.svc-rate span{font-size:12px;color:var(--ink-soft);font-family:"Noto Sans TC"}
+.svc-tag{display:inline-block;font-size:10.5px;font-weight:700;border-radius:99px;padding:2px 9px;letter-spacing:.5px;margin-left:7px;vertical-align:2px;color:var(--violet);background:rgba(124,107,143,.13)}
+
+/* calendar */
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.cal-title{font-weight:700;font-size:15px}
+.cal-nav button{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:16px;transition:.15s;margin-left:7px}
+.cal-nav button:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.cal-nav button:disabled{opacity:.3;cursor:not-allowed}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal-wd{text-align:center;font-size:11px;color:var(--ink-soft);font-weight:700;padding:3px 0}
+.cal-day{aspect-ratio:1;border:1px solid transparent;border-radius:11px;background:#FAF6EF;cursor:pointer;font-family:"JetBrains Mono";font-weight:500;font-size:14px;display:grid;place-items:center;transition:.14s}
+.cal-day:hover:not(.empty):not(.past){border-color:var(--accent)}
+.cal-day.empty{background:transparent;cursor:default}
+.cal-day.past,.cal-day.closed{color:#CFC6B6;background:transparent;cursor:not-allowed}
+.cal-day.today{box-shadow:inset 0 0 0 1.5px var(--gold)}
+.cal-day.on{background:var(--accent);color:#fff;font-weight:700}
+
+/* slots */
+.slot-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px}
+.legend{display:flex;gap:13px;font-size:11.5px;color:var(--ink-soft)}
+.legend i{width:11px;height:11px;border-radius:4px;display:inline-block;margin-right:5px;vertical-align:middle}
+.legend .lg-free{background:#FAF6EF;border:1px solid var(--line)}
+.legend .lg-book{background:repeating-linear-gradient(45deg,#EAE2D3,#EAE2D3 4px,#DED3C0 4px,#DED3C0 8px)}
+.legend .lg-sel{background:var(--accent)}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:8px}
+.slot{border:1.5px solid var(--line);background:#FAF6EF;border-radius:11px;padding:11px 4px;text-align:center;cursor:pointer;transition:.12s;font-family:"JetBrains Mono";font-weight:700;font-size:13.5px;color:var(--ink);user-select:none}
+.slot:hover:not(.booked):not(.past){border-color:var(--accent);transform:translateY(-1px)}
+.slot.past{color:#C9C0B0;background:transparent;border-style:dashed;cursor:not-allowed}
+.slot.booked{background:repeating-linear-gradient(45deg,#EAE2D3,#EAE2D3 5px,#DED3C0 5px,#DED3C0 10px);color:#A99E8A;cursor:not-allowed;border-color:transparent}
+.slot.sel{background:var(--accent);color:#fff;border-color:transparent;box-shadow:0 5px 12px rgba(176,122,69,.35)}
+.slot-empty{font-size:13.5px;color:var(--ink-soft);padding:18px 0;text-align:center;grid-column:1/-1}
+@media(max-width:560px){.cal-day{font-size:16.5px;border-radius:13px}.slots{grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:10px}.slot{padding:15px 4px;font-size:15px;border-radius:13px}}
+
+/* form */
+label.fld{display:block;font-size:13px;font-weight:700;margin-bottom:7px}
+label.fld .req{color:var(--rose);margin-left:3px}
+input,textarea,select{width:100%;font-family:inherit;font-size:15px;color:var(--ink);border:1.5px solid var(--line);border-radius:11px;padding:12px 13px;background:#fff;min-height:46px;transition:.15s}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px rgba(176,122,69,.13)}
+textarea{min-height:76px;resize:vertical;line-height:1.5}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.form-grid .full{grid-column:1/-1}
+@media(max-width:560px){.form-grid{grid-template-columns:1fr}}
+.ppl-row{display:flex;align-items:center;gap:10px}
+.ppl-row .full{flex:1}
+
+/* rules + agree */
+.agree{display:flex;align-items:flex-start;gap:11px;font-size:13.5px;color:var(--ink);background:#FBF7F0;border:1.5px solid var(--line);border-radius:12px;padding:14px;margin:8px 0 16px;cursor:pointer;transition:.15s}
+.agree:hover{border-color:var(--accent)}
+.agree input{width:20px;height:20px;min-height:0;flex:none;margin-top:1px;accent-color:var(--accent);cursor:pointer}
+.note{font-size:13px;color:var(--ink-soft);line-height:1.6;background:#FBF7F0;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:8px}
+
+/* buttons */
+.actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn{flex:1;min-width:150px;border:none;border-radius:12px;padding:15px;font-family:inherit;font-size:15.5px;font-weight:700;cursor:pointer;transition:.18s;min-height:52px}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 10px 22px -8px rgba(176,122,69,.55)}
+.btn-primary:hover:not(:disabled){background:var(--accent-d);transform:translateY(-2px)}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;transform:none}
+.btn-ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--ink)}
+.alert{font-size:13.5px;padding:12px 14px;border-radius:11px;margin-top:13px;display:none}
+.alert.err{background:rgba(178,58,72,.09);color:#9B2433;border:1px solid rgba(178,58,72,.25);display:block}
+
+/* summary aside */
+.aside{position:sticky;top:18px}
+.sumcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.sumcard .top{background:var(--ink);color:#fff;padding:18px 20px}
+.sumcard .top .lbl{font-size:11.5px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.sumcard .top .price{font-family:"Fraunces",serif;font-weight:500;font-size:34px;margin-top:4px;line-height:1}
+.sumcard .body{padding:16px 20px}
+.srow{display:flex;justify-content:space-between;gap:12px;padding:9px 0;font-size:13.5px;border-bottom:1px dashed var(--line)}
+.srow:last-of-type{border-bottom:none}
+.srow .k{color:var(--ink-soft);flex:none}
+.srow .v{font-weight:700;text-align:right}
+.sumcard .body .btn{width:100%;margin-top:14px}
+
+/* mobile bar */
+.mbar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(255,253,248,.93);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:11px 16px;padding-bottom:max(11px,env(safe-area-inset-bottom));display:none;align-items:center;gap:14px;box-shadow:0 -8px 30px -12px rgba(36,29,22,.2)}
+.mbar .mp{flex:1}
+.mbar .mp .lbl{font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft)}
+.mbar .mp .price{font-family:"Fraunces",serif;font-weight:500;font-size:24px;line-height:1}
+.mbar .btn{margin:0;flex:0 0 auto;min-width:120px}
+@media(max-width:900px){.aside{display:none}.mbar{display:flex}}
+
+/* success overlay */
+.done-ov{position:fixed;inset:0;z-index:80;background:rgba(36,29,22,.55);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:22px}
+.done-ov.show{display:flex;animation:fade .4s both}
+.done-card{background:var(--card);border-radius:24px;max-width:440px;width:100%;padding:38px 30px;text-align:center;box-shadow:0 40px 90px -20px rgba(0,0,0,.5);animation:pop .5s cubic-bezier(.2,.8,.3,1.2) both}
+.done-mark{width:74px;height:74px;border-radius:50%;margin:0 auto 18px;display:grid;place-items:center;font-size:38px;color:#fff;background:var(--green);box-shadow:0 14px 30px -8px rgba(94,115,85,.6)}
+.done-card h2{font-family:"Fraunces","Noto Serif TC",serif;font-weight:500;font-size:27px;margin-bottom:8px}
+.done-card .oid{font-family:"JetBrains Mono";font-weight:700;font-size:14px;background:#F6F1E8;border:1px solid var(--line);border-radius:10px;display:inline-block;padding:8px 15px;margin:6px 0 18px}
+.done-card p{color:var(--ink-soft);font-size:14px;margin-bottom:6px}
+.done-acts{display:flex;flex-direction:column;gap:10px;margin-top:22px}
+.done-acts .btn{width:100%;min-width:0}
+.btn-line{background:#06C755;color:#fff;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:scale(.9) translateY(20px)}to{opacity:1;transform:none}}
+
+/* gallery */
+.gallery{max-width:1080px;margin:10px auto 0;padding:40px 18px 10px}
+.gal-head{text-align:center;margin-bottom:24px}
+.gal-eye{display:inline-block;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:10px}
+.gal-head h2{font-family:"Fraunces","Noto Serif TC",serif;font-weight:500;font-size:clamp(24px,4vw,34px);color:var(--ink)}
+.gal-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:160px;gap:12px}
+.gal-img{background-size:cover;background-position:center;border-radius:14px;background-color:#E7DDCC}
+.gal-img.tall{grid-row:span 2}
+.gal-img.wide{grid-column:span 2}
+@media(max-width:760px){.gal-grid{grid-template-columns:repeat(2,1fr);grid-auto-rows:140px}.gal-img.wide{grid-column:span 2}}
+footer{text-align:center;font-size:12.5px;color:var(--ink-soft);padding:30px 18px 40px}
+footer .fb{font-family:"Fraunces",serif;font-size:17px;color:var(--ink);margin-bottom:5px}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <div class="hero-photo" style="background-image:url('assets/hero.jpg')"></div>
+  <div class="hero-scrim"></div>
+  <div class="hero-top">
+    <span class="bm"><img class="bm-logo" src="assets/logo.jpg" alt="I'm here 有我在療癒所"><span class="bm-txt">I'M HERE · 有我在療癒所</span></span>
+    <a href="#book" class="hero-nav">立即預約 →</a>
+  </div>
+  <div class="hero-content">
+    <span class="eyebrow">聲音療癒 · SOUND HEALING</span>
+    <h1 class="serif"><span>在這裡，</span><span>讓身體慢慢鬆下來。</span></h1>
+    <p class="sub">頌缽音療・希塔療癒・臼井靈氣・水晶手作——選一個適合此刻的你，預約一段被好好照顧的時間。</p>
+    <a href="#book" class="cta"><span class="dot"></span>開始預約</a>
+  </div>
+</header>
+
+<!-- ============ BOOKING ============ -->
+<div class="shell" id="book">
+  <div class="shell-top"></div>
+  <div class="stepper" id="stepper">
+    <div class="st on" data-s="1"><span class="sd">1</span><span class="sl">選服務</span></div><span class="bar"></span>
+    <div class="st" data-s="2"><span class="sd">2</span><span class="sl">日期時段</span></div><span class="bar"></span>
+    <div class="st" data-s="3"><span class="sd">3</span><span class="sl">填資料</span></div><span class="bar"></span>
+    <div class="st" data-s="4"><span class="sd">4</span><span class="sl">確認</span></div>
+  </div>
+
+  <div class="layout">
+    <div class="main">
+      <!-- 1 選服務 -->
+      <section class="panel" id="p1">
+        <div class="p-head"><span class="p-num">1</span><span class="p-title">選擇服務</span></div>
+        <div class="cats" id="cats"></div>
+        <div class="services" id="services"></div>
+      </section>
+
+      <!-- 2 日期時段 -->
+      <section class="panel" id="p2">
+        <div class="p-head"><span class="p-num">2</span><span class="p-title">選擇日期與時段</span><span class="p-hint" id="dtHint">請先選擇服務</span></div>
+        <div class="cal-head"><span class="cal-title" id="calTitle"></span><span class="cal-nav"><button id="calPrev">‹</button><button id="calNext">›</button></span></div>
+        <div class="cal-grid" id="calWd"></div>
+        <div class="cal-grid" id="calDays" style="margin-top:5px"></div>
+        <div class="slot-bar" style="margin-top:18px">
+          <span style="font-weight:700;font-size:14px" id="slotLabel">可預約時段</span>
+          <div class="legend"><span><i class="lg-free"></i>可約</span><span><i class="lg-book"></i>已滿</span><span><i class="lg-sel"></i>已選</span></div>
+        </div>
+        <div class="slots" id="slots"><div class="slot-empty">選好日期後，這裡會顯示可預約時段</div></div>
+      </section>
+
+      <!-- 3 填資料 -->
+      <section class="panel" id="p3">
+        <div class="p-head"><span class="p-num">3</span><span class="p-title">預約人資料</span></div>
+        <div class="form-grid">
+          <div><label class="fld">姓名<span class="req">*</span></label><input id="fName" placeholder="王小明" autocomplete="name"></div>
+          <div><label class="fld">手機<span class="req">*</span></label><input id="fPhone" placeholder="0912-345-678" inputmode="tel" autocomplete="tel"></div>
+          <div class="full" id="pplWrap" style="display:none"><label class="fld">人數<span class="req">*</span></label><select id="fPpl"></select></div>
+          <div class="full"><label class="fld">想先讓療癒師知道的事（選填）</label><textarea id="fNote" placeholder="例如：第一次體驗、最近睡不好、想放鬆肩頸…"></textarea></div>
+        </div>
+      </section>
+
+      <!-- 4 確認 -->
+      <section class="panel" id="p4">
+        <div class="p-head"><span class="p-num">4</span><span class="p-title">確認與送出</span></div>
+        <div class="note" id="policyNote">送出後我們會盡快透過 LINE 與你確認時間。預約成功與提醒通知會發到你的 LINE。</div>
+        <label class="agree"><input type="checkbox" id="agree"><span>我已了解這是<b>預約申請</b>，實際時間以療癒師 LINE 回覆<b>確認為準</b>。</span></label>
+        <div class="actions">
+          <button class="btn btn-primary" id="btnSubmit">確認預約</button>
+        </div>
+        <div class="alert" id="alert"></div>
+      </section>
+    </div>
+
+    <!-- summary -->
+    <aside class="aside">
+      <div class="sumcard">
+        <div class="top"><div class="lbl">預估金額</div><div class="price" id="sumPrice">—</div></div>
+        <div class="body">
+          <div class="srow"><span class="k">服務</span><span class="v" id="sumSvc">—</span></div>
+          <div class="srow"><span class="k">時長</span><span class="v" id="sumDur">—</span></div>
+          <div class="srow"><span class="k">日期</span><span class="v" id="sumDate">—</span></div>
+          <div class="srow"><span class="k">時段</span><span class="v" id="sumTime">—</span></div>
+          <div class="srow" id="sumPplRow" style="display:none"><span class="k">人數</span><span class="v" id="sumPpl">—</span></div>
+          <button class="btn btn-primary" id="btnSubmit2">確認預約</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- mobile bar -->
+<div class="mbar"><div class="mp"><div class="lbl">預估金額</div><div class="price" id="mPrice">—</div></div><button class="btn btn-primary" id="btnSubmit3">確認預約</button></div>
+
+<div class="toast" id="toast"></div>
+
+<!-- success -->
+<div class="done-ov" id="doneOv">
+  <div class="done-card">
+    <div class="done-mark">✓</div>
+    <h2 class="serif">預約申請已送出</h2>
+    <div class="oid" id="doneOid">—</div>
+    <p>我們會盡快透過 LINE 跟你確認時間。</p>
+    <p id="doneSummary" style="color:var(--ink)"></p>
+    <div class="done-acts">
+      <a class="btn btn-line" id="doneLine" href="#">加 LINE 看確認通知</a>
+      <button class="btn btn-ghost" id="doneAgain">再預約一筆</button>
+    </div>
+  </div>
+</div>
+
+<section class="gallery">
+  <div class="gal-head">
+    <span class="gal-eye">關於空間 · OUR SPACE</span>
+    <h2 class="serif">一個讓你安心躺下、好好被聲音照顧的地方</h2>
+  </div>
+  <div class="gal-grid">
+    <div class="gal-img tall" style="background-image:url('assets/svc-rent.jpg')"></div>
+    <div class="gal-img" style="background-image:url('assets/atmos1.jpg')"></div>
+    <div class="gal-img" style="background-image:url('assets/owner.jpg')"></div>
+    <div class="gal-img wide" style="background-image:url('assets/svc-group.jpg')"></div>
+    <div class="gal-img" style="background-image:url('assets/atmos2.jpg')"></div>
+    <div class="gal-img" style="background-image:url('assets/svc-bowl.jpg')"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="fb">I'm here 有我在療癒所</div>
+  337 桃園市大園區青山里致祥一街 95 號 2 樓　·　LINE @933jczxb　·　IG @im_here_healingspace
+</footer>
+
+<script>
+/* ============================================================
+   CONFIG —— 缺的資料填這裡就好（價格／時段／憑證）
+   ============================================================ */
+const CONFIG = {
+  brand: "I'm here 有我在療癒所",
+  liffId: "2010479820-5D4jxm22",    // LINE LIFF ID（填了＝在 LINE 內開會自動綁定身分）
+  apiUrl: "https://script.google.com/macros/s/AKfycbwGPAtLM51TuTa4hjOhU37gJ76yOEwxoNpdEf6MR5WrJaJy4W3shL2pNLqmx8iml5Yt/exec",
+  lineOaUrl: "https://line.me/R/ti/p/@933jczxb",
+  // 營業時間：0=週日 … 6=週六；null=公休
+  hours: {
+    0:{open:"11:00",close:"20:00"}, 1:{open:"11:00",close:"20:00"}, 2:{open:"11:00",close:"20:00"},
+    3:{open:"11:00",close:"20:00"}, 4:{open:"11:00",close:"20:00"}, 5:{open:"11:00",close:"20:00"}, 6:{open:"11:00",close:"20:00"}
+  },
+  slotStep: 30,                     // 時段起始間隔（分）
+  daysAhead: 45,                    // 開放預約天數
+  closedDates: [],                  // 公休/封鎖日（由後台設定即時帶入）
+  // 服務：category 分組，price=0 代表待補
+  categories: [
+    { key:"bowl",  name:"頌缽音療", color:"var(--accent)" },
+    { key:"heal",  name:"療癒",     color:"var(--violet)" },
+    { key:"diy",   name:"DIY 手作", color:"var(--oak)" },
+    { key:"rent",  name:"場地租借", color:"var(--sage)" }
+  ],
+  services: [
+    { id:"bowl-solo",  cat:"bowl", name:"單人頌缽", dur:120, price:2200, img:"owner.jpg",     desc:"足缽感受震動、頌缽掃描全身，回到平衡的自己。" },
+    { id:"bowl-duo",   cat:"bowl", name:"雙人頌缽", dur:120, price:4000, img:"svc-bowl.jpg",  desc:"兩人一起沉浸於頌缽聲波，共振放鬆。", ppl:2 },
+    { id:"bowl-group", cat:"bowl", name:"團體聲浴", dur:90,  price:800, perPerson:true, minPpl:4, maxPpl:6, img:"svc-group.jpg", desc:"4–6 人團體聲浴，躺在乳膠墊上被聲音包圍。" },
+    { id:"heal-theta", cat:"heal", name:"希塔療癒 ThetaHealing", dur:90, price:2200, perPerson:true, online:true, img:"svc-heal.jpg", desc:"進入 Theta 波，找出潛意識限制信念並轉化。" },
+    { id:"heal-reiki", cat:"heal", name:"臼井靈氣", dur:90, price:2200, perPerson:true, online:true, img:"atmos2.jpg", desc:"傳導宇宙生命能量，疏通脈輪、恢復流動。" },
+    { id:"diy-crystal",cat:"diy",  name:"水晶手作", dur:120, price:0, img:"atmos1.jpg",  desc:"脈輪能量分析＋手作專屬能量飾品（編織／彈性繩／鋼鍊擇一）。" },
+    { id:"diy-candle", cat:"diy",  name:"療癒蠟燭", dur:120, price:0, img:"svc-bowl.jpg", desc:"美國 C6 大豆蠟，依能量調配草藥與水晶。" },
+    { id:"diy-oil",    cat:"diy",  name:"精油 café", dur:120, price:0, img:"atmos3.jpg", desc:"6 罐 5ml 按摩油，天然精油基底、身心調頻。" },
+    { id:"rent-wk",    cat:"rent", name:"場地租借（平日）", dur:60, price:400, perHour:true, img:"svc-rent.jpg", desc:"平日每小時，可預約現場參觀。" },
+    { id:"rent-we",    cat:"rent", name:"場地租借（假日）", dur:60, price:500, perHour:true, img:"svc-rent.jpg", desc:"假日每小時，可預約現場參觀。" }
+  ]
+};
+
+/* ============================================================
+   STATE & HELPERS
+   ============================================================ */
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+const state={ cat:CONFIG.categories[0].key, svc:null, date:null, time:null, ppl:1, profile:null };
+const fmtNT=n=>"NT$"+(n||0).toLocaleString();
+const pad=n=>String(n).padStart(2,"0");
+const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const toMin=t=>{const[a,b]=t.split(":").map(Number);return a*60+b;};
+const toHHMM=m=>`${pad(Math.floor(m/60))}:${pad(m%60)}`;
+function toast(msg,ok){const t=$("#toast");t.textContent=msg;t.className="toast show"+(ok?" ok":"");setTimeout(()=>t.className="toast",2600);}
+
+/* ============================================================
+   LIFF 初始化（自動帶入 LINE 名字／userId）
+   ============================================================ */
+async function initLiff(){
+  if(!CONFIG.liffId || !window.liff) return;
+  try{
+    await liff.init({liffId:CONFIG.liffId});
+    if(liff.isLoggedIn()){
+      const p=await liff.getProfile();
+      state.profile={userId:p.userId,name:p.displayName};
+      if($("#fName") && !$("#fName").value) $("#fName").value=p.displayName||"";
+    }else{ liff.login(); }
+  }catch(e){ console.warn("LIFF init failed:",e); }
+}
+
+/* ============================================================
+   STEP 1 — 服務
+   ============================================================ */
+function renderCats(){
+  $("#cats").innerHTML=CONFIG.categories.map(c=>`<button class="cat${c.key===state.cat?' on':''}" data-c="${c.key}">${c.name}</button>`).join("");
+  $$("#cats .cat").forEach(b=>b.onclick=()=>{state.cat=b.dataset.c;renderCats();renderServices();});
+}
+function renderServices(){
+  const list=CONFIG.services.filter(s=>s.cat===state.cat);
+  $("#services").innerHTML=list.map(s=>{
+    const priceTxt = s.price>0
+      ? `${fmtNT(s.price)}${s.perPerson?'<span> / 人</span>':''}${s.perHour?'<span> / 小時</span>':''}`
+      : '<span style="color:var(--ink-soft)">價格洽詢</span>';
+    const tags=[];
+    if(s.online) tags.push('可線上');
+    if(s.minPpl) tags.push(`${s.minPpl}–${s.maxPpl} 人`);
+    return `<button class="svc${state.svc&&state.svc.id===s.id?' on':''}" data-id="${s.id}">
+      <div class="svc-img" style="background-image:url('assets/${s.img||'atmos1.jpg'}')"></div>
+      <div class="svc-body">
+        <div class="svc-name">${s.name}${tags.map(t=>`<span class="svc-tag">${t}</span>`).join('')}</div>
+        <div class="svc-meta">${s.dur} 分鐘</div>
+        <div class="svc-desc">${s.desc}</div>
+        <div class="svc-rate">${priceTxt}</div>
+      </div>
+    </button>`;
+  }).join("");
+  $$("#services .svc").forEach(b=>b.onclick=()=>selectSvc(b.dataset.id));
+}
+function selectSvc(id){
+  state.svc=CONFIG.services.find(s=>s.id===id);
+  state.time=null;
+  // 人數
+  if(state.svc.minPpl){ state.ppl=state.svc.minPpl; buildPplOptions(state.svc.minPpl,state.svc.maxPpl); $("#pplWrap").style.display=""; $("#sumPplRow").style.display=""; }
+  else if(state.svc.ppl){ state.ppl=state.svc.ppl; $("#pplWrap").style.display="none"; $("#sumPplRow").style.display=""; }
+  else { state.ppl=1; $("#pplWrap").style.display="none"; $("#sumPplRow").style.display="none"; }
+  renderServices(); renderCal(); renderSlots(); updateSummary(); setStep(2);
+  $("#dtHint").textContent=state.svc.name;
+  document.getElementById("p2").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function buildPplOptions(min,max){
+  let o="";for(let i=min;i<=max;i++)o+=`<option value="${i}">${i} 人</option>`;
+  $("#fPpl").innerHTML=o;$("#fPpl").value=min;
+  $("#fPpl").onchange=()=>{state.ppl=+$("#fPpl").value;updateSummary();};
+}
+
+/* ============================================================
+   STEP 2 — 日曆 + 時段
+   ============================================================ */
+let calMonth=new Date();calMonth.setDate(1);
+function renderCal(){
+  $("#calWd").innerHTML=["日","一","二","三","四","五","六"].map(w=>`<div class="cal-wd">${w}</div>`).join("");
+  $("#calTitle").textContent=`${calMonth.getFullYear()} 年 ${calMonth.getMonth()+1} 月`;
+  const first=new Date(calMonth),start=first.getDay(),dim=new Date(calMonth.getFullYear(),calMonth.getMonth()+1,0).getDate();
+  const today=new Date();today.setHours(0,0,0,0);
+  const maxDate=new Date();maxDate.setDate(maxDate.getDate()+CONFIG.daysAhead);
+  let html="";for(let i=0;i<start;i++)html+='<div class="cal-day empty"></div>';
+  for(let d=1;d<=dim;d++){
+    const date=new Date(calMonth.getFullYear(),calMonth.getMonth(),d);
+    const cls=["cal-day"];const ds=ymd(date);
+    const closed=!CONFIG.hours[date.getDay()] || (CONFIG.closedDates||[]).includes(ds);
+    if(date<today||date>maxDate)cls.push("past");
+    else if(closed)cls.push("closed");
+    if(+date===+today)cls.push("today");
+    if(state.date===ds)cls.push("on");
+    const dis=date<today||date>maxDate||closed;
+    html+=`<div class="${cls.join(' ')}" ${dis?'':`data-d="${ds}"`}>${d}</div>`;
+  }
+  $("#calDays").innerHTML=html;
+  $$("#calDays .cal-day[data-d]").forEach(el=>el.onclick=()=>{state.date=el.dataset.d;state.time=null;renderCal();renderSlots();updateSummary();});
+  const pm=new Date();pm.setDate(1);
+  $("#calPrev").disabled=(calMonth.getFullYear()===pm.getFullYear()&&calMonth.getMonth()<=pm.getMonth());
+}
+$("#calPrev").onclick=()=>{calMonth.setMonth(calMonth.getMonth()-1);renderCal();};
+$("#calNext").onclick=()=>{calMonth.setMonth(calMonth.getMonth()+1);renderCal();};
+
+async function renderSlots(){
+  const box=$("#slots");
+  if(!state.svc||!state.date){box.innerHTML='<div class="slot-empty">選好日期後，這裡會顯示可預約時段</div>';return;}
+  const date=new Date(state.date+"T00:00:00");
+  if((CONFIG.closedDates||[]).includes(state.date)){box.innerHTML='<div class="slot-empty">當日公休</div>';return;}
+  const h=CONFIG.hours[date.getDay()];
+  if(!h){box.innerHTML='<div class="slot-empty">當日公休</div>';return;}
+  // 產生候選時段：需容得下整段療程
+  const open=toMin(h.open),close=toMin(h.close),dur=state.svc.dur;
+  const cand=[];for(let t=open;t+dur<=close;t+=CONFIG.slotStep)cand.push(t);
+  // 抓已被預約的時段
+  box.innerHTML='<div class="slot-empty">載入可預約時段…</div>';
+  const booked=await fetchBooked(state.date,state.svc.id);
+  const now=new Date();
+  box.innerHTML=cand.map(t=>{
+    const start=toHHMM(t),end=toHHMM(t+dur);
+    const slotStart=new Date(state.date+"T"+start+":00");
+    const isPast=slotStart<now;
+    const isBooked=booked.some(b=>t<toMin(b.end)&&(t+dur)>toMin(b.start));
+    const cls=["slot"];if(isPast)cls.push("past");else if(isBooked)cls.push("booked");
+    if(state.time===start)cls.push("sel");
+    const dis=isPast||isBooked;
+    return `<div class="${cls.join(' ')}" ${dis?'':`data-t="${start}" data-e="${end}"`}>${start}</div>`;
+  }).join("")||'<div class="slot-empty">這天沒有可預約的時段了</div>';
+  $$("#slots .slot[data-t]").forEach(el=>el.onclick=()=>{
+    state.time=el.dataset.t;state.timeEnd=el.dataset.e;renderSlots();updateSummary();setStep(3);
+  });
+}
+// 從 Apps Script 抓某天已預約時段；沒設 API 時回空陣列（demo）
+async function fetchBooked(date,svcId){
+  if(!CONFIG.apiUrl) return [];
+  try{
+    const r=await fetch(`${CONFIG.apiUrl}?action=slots&date=${date}&service=${encodeURIComponent(svcId)}`);
+    const j=await r.json();return j.booked||[];
+  }catch(e){console.warn("fetchBooked failed",e);return [];}
+}
+
+/* ============================================================
+   摘要 + 步驟
+   ============================================================ */
+function price(){if(!state.svc)return 0;let p=state.svc.price;if(state.svc.perPerson)p*=state.ppl;return p;}
+function updateSummary(){
+  const s=state.svc;
+  $("#sumSvc").textContent=s?s.name:"—";
+  $("#sumDur").textContent=s?s.dur+" 分鐘":"—";
+  $("#sumDate").textContent=state.date||"—";
+  $("#sumTime").textContent=state.time?`${state.time}–${state.timeEnd||""}`:"—";
+  $("#sumPpl").textContent=state.ppl+" 人";
+  const pt=s&&s.price>0?fmtNT(price()):(s?"洽詢":"—");
+  $("#sumPrice").textContent=pt;$("#mPrice").textContent=pt;
+}
+function setStep(n){
+  $$("#stepper .st").forEach(st=>{const s=+st.dataset.s;st.classList.toggle("on",s===n);st.classList.toggle("done",s<n);});
+}
+
+/* ============================================================
+   送出
+   ============================================================ */
+async function submit(){
+  const name=$("#fName").value.trim(),phone=$("#fPhone").value.trim();
+  const err=m=>{const a=$("#alert");a.textContent=m;a.className="alert err";a.scrollIntoView({behavior:"smooth",block:"center"});};
+  if(!state.svc)return err("請先選擇服務");
+  if(!state.date||!state.time)return err("請選擇日期與時段");
+  if(!name)return err("請填寫姓名");
+  if(!/^09\d{2}-?\d{3}-?\d{3}$/.test(phone.replace(/\s/g,"")))return err("請填寫正確的手機號碼");
+  if(!$("#agree").checked)return err("請勾選同意預約說明");
+  $("#alert").className="alert";
+  const payload={
+    action:"book", service:state.svc.id, serviceName:state.svc.name,
+    date:state.date, start:state.time, end:state.timeEnd, duration:state.svc.dur,
+    ppl:state.ppl, price:price(), name, phone, note:$("#fNote").value.trim(),
+    lineUserId:state.profile?.userId||"", lineName:state.profile?.name||""
+  };
+  $$(".btn-primary").forEach(b=>{b.disabled=true;b.textContent="送出中…";});
+  let oid="DEMO-"+Date.now().toString().slice(-6);
+  try{
+    if(CONFIG.apiUrl){
+      const r=await fetch(CONFIG.apiUrl,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
+      const j=await r.json();
+      if(!j.ok)throw new Error(j.error||"送出失敗");
+      oid=j.bookingId||oid;
+    }else{
+      await new Promise(r=>setTimeout(r,600)); // demo
+    }
+    showDone(oid);
+  }catch(e){
+    err("送出失敗："+e.message+"（可改用 LINE @933jczxb 直接預約）");
+  }finally{
+    $$(".btn-primary").forEach(b=>{b.disabled=false;b.textContent="確認預約";});
+  }
+}
+function showDone(oid){
+  $("#doneOid").textContent="預約編號 "+oid;
+  $("#doneSummary").textContent=`${state.svc.name}　${state.date} ${state.time}`;
+  $("#doneLine").href=CONFIG.lineOaUrl;
+  $("#doneOv").classList.add("show");
+  if(!CONFIG.apiUrl)toast("Demo 模式：尚未連接後端，這筆沒真的存檔",false);
+}
+$("#doneAgain").onclick=()=>{location.reload();};
+
+["#btnSubmit","#btnSubmit2","#btnSubmit3"].forEach(s=>$(s).onclick=submit);
+
+/* ============================================================
+   INIT
+   ============================================================ */
+renderCats();renderServices();renderCal();updateSummary();
+initLiff();
+fetchRemoteConfig();
+
+// 讀後台設定（營業時間/價格/公休），有就即時覆蓋
+async function fetchRemoteConfig(){
+  if(!CONFIG.apiUrl) return;
+  try{
+    const j=await (await fetch(CONFIG.apiUrl+'?action=config')).json();
+    const c=j.config; if(!c) return;
+    if(c.hours) CONFIG.hours=c.hours;
+    if(c.prices) CONFIG.services.forEach(s=>{ if(c.prices[s.id]!=null) s.price=c.prices[s.id]; });
+    if(Array.isArray(c.closedDates)) CONFIG.closedDates=c.closedDates;
+    renderServices(); renderCal(); if(state.svc) renderSlots(); updateSummary();
+  }catch(e){ console.warn('config fetch failed',e); }
+}
+</script>
+</body>
+</html>
