@@ -404,12 +404,12 @@ const CONFIG = {
     { id:"bowl-solo",  cat:"bowl", name:"單人頌缽", dur:90,  price:2200, img:"bowl-solo.jpg",  desc:"足缽感受震動、頌缽掃描全身，回到平衡的自己。" },
     { id:"bowl-duo",   cat:"bowl", name:"雙人頌缽", dur:120, price:4000, img:"bowl-duo.jpg",   desc:"兩人一起沉浸於頌缽聲波，共振放鬆。", ppl:2 },
     { id:"bowl-trio",  cat:"bowl", name:"三人頌缽", dur:150, price:5400, img:"bowl-trio.jpg",  desc:"三人一起在頌缽聲波中共振放鬆。", ppl:3 },
-    { id:"bowl-group", cat:"bowl", name:"團體聲浴", dur:90,  price:800, perPerson:true, minPpl:4, maxPpl:6, img:"bowl-group.jpg", desc:"4–6 人團體聲浴，躺在乳膠墊上被聲音包圍。" },
+    { id:"bowl-group", cat:"bowl", name:"團體聲浴（私揪／包場）", dur:90,  price:800, perPerson:true, minPpl:4, maxPpl:6, img:"bowl-group.jpg", desc:"自己揪 4–6 人的專屬團體場，選你們方便的時間。想參加固定公開場次，請見官網「主題活動」。" },
     { id:"heal-theta", cat:"heal", name:"希塔療癒 ThetaHealing", dur:90, price:2200, perPerson:true, online:true, img:"theta.jpg", desc:"進入 Theta 波，找出潛意識限制信念並轉化。" },
     { id:"heal-reiki", cat:"heal", name:"臼井靈氣", dur:90, price:2200, perPerson:true, online:true, img:"reiki.jpg", desc:"傳導宇宙生命能量，疏通脈輪、恢復流動。" },
-    { id:"diy-crystal",cat:"diy",  name:"水晶手作", dur:120, price:0, img:"crystal.jpg",  desc:"脈輪能量分析＋手作專屬能量飾品（編織／彈性繩／鋼鍊擇一）。" },
-    { id:"diy-candle", cat:"diy",  name:"療癒蠟燭", dur:120, price:0, img:"candle.jpg", desc:"美國 C6 大豆蠟，依能量調配草藥與水晶。" },
-    { id:"diy-oil",    cat:"diy",  name:"精油調香", dur:120, price:0, img:"oil.jpg", desc:"6 罐 5ml 按摩油，天然精油基底、身心調頻。" },
+    { id:"diy-crystal",cat:"diy",  name:"水晶手作", dur:120, price:2200, from:true, img:"crystal.jpg",  desc:"脈輪能量分析＋手作專屬能量飾品（編織／彈性繩／鋼鍊擇一）。" },
+    { id:"diy-candle", cat:"diy",  name:"療癒蠟燭", dur:120, price:2200, from:true, img:"candle.jpg", desc:"美國 C6 大豆蠟，依能量調配草藥與水晶。" },
+    { id:"diy-oil",    cat:"diy",  name:"精油調香", dur:120, price:2200, from:true, img:"oil.jpg", desc:"6 罐 5ml 按摩油，天然精油基底、身心調頻。" },
     { id:"rent-wk",    cat:"rent", name:"場地租借（平日）", dur:60, price:400, perHour:true, img:"rent.jpg", desc:"平日每小時，可預約現場參觀。" },
     { id:"rent-we",    cat:"rent", name:"場地租借（假日）", dur:60, price:500, perHour:true, img:"rent.jpg", desc:"假日每小時，可預約現場參觀。" }
   ]
@@ -453,7 +453,7 @@ function renderServices(){
   const list=CONFIG.services.filter(s=>s.cat===state.cat);
   $("#services").innerHTML=list.map(s=>{
     const priceTxt = s.price>0
-      ? `${fmtNT(s.price)}${s.perPerson?'<span> / 人</span>':''}${s.perHour?'<span> / 小時</span>':''}`
+      ? `${fmtNT(s.price)}${s.perPerson?'<span> / 人</span>':''}${s.perHour?'<span> / 小時</span>':''}${s.from?'<span> 起</span>':''}`
       : '<span style="color:var(--ink-soft)">價格洽詢</span>';
     const tags=[];
     if(s.online) tags.push('可線上');
@@ -565,7 +565,7 @@ function updateSummary(){
   $("#sumDate").textContent=state.date||"—";
   $("#sumTime").textContent=state.time?`${state.time}–${state.timeEnd||""}`:"—";
   $("#sumPpl").textContent=state.ppl+" 人";
-  const pt=s&&s.price>0?fmtNT(price()):(s?"洽詢":"—");
+  const pt=s&&s.price>0?fmtNT(price())+(s.from?' 起':''):(s?"洽詢":"—");
   $("#sumPrice").textContent=pt;$("#mPrice").textContent=pt;
 }
 function setStep(n){
