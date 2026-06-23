@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>I'm here 有我在療癒所 · 預約</title>
-<meta name="description" content="頌缽音療、希塔療癒、靈氣、水晶手作——線上預約你的療癒時段。">
+<meta name="description" content="頌缽聲療、希塔療癒、靈氣、水晶手作——線上預約你的療癒時段。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -232,7 +232,7 @@ footer .fb{font-family:"Fraunces",serif;font-size:17px;color:var(--ink);margin-b
   <div class="hero-content">
     <span class="eyebrow">聲音療癒 · SOUND HEALING</span>
     <h1 class="serif"><span>在這裡，</span><span>讓身體慢慢鬆下來。</span></h1>
-    <p class="sub">頌缽音療・希塔療癒・臼井靈氣・水晶手作——選一個適合此刻的你，預約一段被好好照顧的時間。</p>
+    <p class="sub">頌缽聲療・希塔療癒・臼井靈氣・水晶手作——選一個適合此刻的你，預約一段被好好照顧的時間。</p>
     <a href="#book" class="cta"><span class="dot"></span>開始預約</a>
   </div>
 </header>
@@ -368,22 +368,23 @@ const CONFIG = {
   closedDates: [],                  // 公休/封鎖日（由後台設定即時帶入）
   // 服務：category 分組，price=0 代表待補
   categories: [
-    { key:"bowl",  name:"頌缽音療", color:"var(--accent)" },
-    { key:"heal",  name:"療癒",     color:"var(--violet)" },
+    { key:"bowl",  name:"頌缽聲療", color:"var(--accent)" },
+    { key:"heal",  name:"其他療癒", color:"var(--violet)" },
     { key:"diy",   name:"DIY 手作", color:"var(--oak)" },
     { key:"rent",  name:"場地租借", color:"var(--sage)" }
   ],
   services: [
-    { id:"bowl-solo",  cat:"bowl", name:"單人頌缽", dur:120, price:2200, img:"owner.jpg",     desc:"足缽感受震動、頌缽掃描全身，回到平衡的自己。" },
-    { id:"bowl-duo",   cat:"bowl", name:"雙人頌缽", dur:120, price:4000, img:"svc-bowl.jpg",  desc:"兩人一起沉浸於頌缽聲波，共振放鬆。", ppl:2 },
-    { id:"bowl-group", cat:"bowl", name:"團體聲浴", dur:90,  price:800, perPerson:true, minPpl:4, maxPpl:6, img:"svc-group.jpg", desc:"4–6 人團體聲浴，躺在乳膠墊上被聲音包圍。" },
-    { id:"heal-theta", cat:"heal", name:"希塔療癒 ThetaHealing", dur:90, price:2200, perPerson:true, online:true, img:"svc-heal.jpg", desc:"進入 Theta 波，找出潛意識限制信念並轉化。" },
-    { id:"heal-reiki", cat:"heal", name:"臼井靈氣", dur:90, price:2200, perPerson:true, online:true, img:"atmos2.jpg", desc:"傳導宇宙生命能量，疏通脈輪、恢復流動。" },
-    { id:"diy-crystal",cat:"diy",  name:"水晶手作", dur:120, price:0, img:"atmos1.jpg",  desc:"脈輪能量分析＋手作專屬能量飾品（編織／彈性繩／鋼鍊擇一）。" },
-    { id:"diy-candle", cat:"diy",  name:"療癒蠟燭", dur:120, price:0, img:"svc-bowl.jpg", desc:"美國 C6 大豆蠟，依能量調配草藥與水晶。" },
-    { id:"diy-oil",    cat:"diy",  name:"精油 café", dur:120, price:0, img:"atmos3.jpg", desc:"6 罐 5ml 按摩油，天然精油基底、身心調頻。" },
-    { id:"rent-wk",    cat:"rent", name:"場地租借（平日）", dur:60, price:400, perHour:true, img:"svc-rent.jpg", desc:"平日每小時，可預約現場參觀。" },
-    { id:"rent-we",    cat:"rent", name:"場地租借（假日）", dur:60, price:500, perHour:true, img:"svc-rent.jpg", desc:"假日每小時，可預約現場參觀。" }
+    { id:"bowl-solo",  cat:"bowl", name:"單人頌缽", dur:90,  price:2200, img:"bowl-solo.jpg",  desc:"足缽感受震動、頌缽掃描全身，回到平衡的自己。" },
+    { id:"bowl-duo",   cat:"bowl", name:"雙人頌缽", dur:120, price:4000, img:"bowl-duo.jpg",   desc:"兩人一起沉浸於頌缽聲波，共振放鬆。", ppl:2 },
+    { id:"bowl-trio",  cat:"bowl", name:"三人頌缽", dur:150, price:5400, img:"bowl-trio.jpg",  desc:"三人一起在頌缽聲波中共振放鬆。", ppl:3 },
+    { id:"bowl-group", cat:"bowl", name:"團體聲浴", dur:90,  price:800, perPerson:true, minPpl:4, maxPpl:6, img:"bowl-group.jpg", desc:"4–6 人團體聲浴，躺在乳膠墊上被聲音包圍。" },
+    { id:"heal-theta", cat:"heal", name:"希塔療癒 ThetaHealing", dur:90, price:2200, perPerson:true, online:true, img:"theta.jpg", desc:"進入 Theta 波，找出潛意識限制信念並轉化。" },
+    { id:"heal-reiki", cat:"heal", name:"臼井靈氣", dur:90, price:2200, perPerson:true, online:true, img:"reiki.jpg", desc:"傳導宇宙生命能量，疏通脈輪、恢復流動。" },
+    { id:"diy-crystal",cat:"diy",  name:"水晶手作", dur:120, price:0, img:"crystal.jpg",  desc:"脈輪能量分析＋手作專屬能量飾品（編織／彈性繩／鋼鍊擇一）。" },
+    { id:"diy-candle", cat:"diy",  name:"療癒蠟燭", dur:120, price:0, img:"candle.jpg", desc:"美國 C6 大豆蠟，依能量調配草藥與水晶。" },
+    { id:"diy-oil",    cat:"diy",  name:"精油調香", dur:120, price:0, img:"oil.jpg", desc:"6 罐 5ml 按摩油，天然精油基底、身心調頻。" },
+    { id:"rent-wk",    cat:"rent", name:"場地租借（平日）", dur:60, price:400, perHour:true, img:"rent.jpg", desc:"平日每小時，可預約現場參觀。" },
+    { id:"rent-we",    cat:"rent", name:"場地租借（假日）", dur:60, price:500, perHour:true, img:"rent.jpg", desc:"假日每小時，可預約現場參觀。" }
   ]
 };
 
