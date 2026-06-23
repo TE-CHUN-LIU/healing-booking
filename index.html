@@ -214,6 +214,14 @@ textarea{min-height:76px;resize:vertical;line-height:1.5}
 .gal-img.tall{grid-row:span 2}
 .gal-img.wide{grid-column:span 2}
 @media(max-width:760px){.gal-grid{grid-template-columns:repeat(2,1fr);grid-auto-rows:140px}.gal-img.wide{grid-column:span 2}}
+.more{max-width:1080px;margin:10px auto 0;padding:30px 18px 10px}
+.more-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:680px){.more-grid{grid-template-columns:1fr}}
+.more-card{display:block;background:var(--card,#FFFDF8);border:1px solid var(--line,#E7DDCC);border-radius:16px;padding:22px 24px;transition:.18s;text-decoration:none;color:inherit}
+.more-card:hover{transform:translateY(-2px);box-shadow:0 12px 28px -12px rgba(140,94,50,.4);border-color:var(--accent)}
+.more-card h3{font-family:"Fraunces","Noto Serif TC",serif;font-weight:500;font-size:20px;color:var(--ink);margin-bottom:8px}
+.more-card p{font-size:14px;color:var(--ink-soft);line-height:1.8}
+.more-card .more-go{display:inline-block;margin-top:12px;font-size:14px;font-weight:700;color:var(--accent)}
 footer{text-align:center;font-size:12.5px;color:var(--ink-soft);padding:30px 18px 40px}
 footer .fb{font-family:"Fraunces",serif;font-size:17px;color:var(--ink);margin-bottom:5px}
 .hidden{display:none!important}
@@ -344,6 +352,25 @@ footer .fb{font-family:"Fraunces",serif;font-size:17px;color:var(--ink);margin-b
   </div>
 </section>
 
+<section class="more">
+  <div class="gal-head">
+    <span class="gal-eye">想更深入 · MORE</span>
+    <h2 class="serif">除了預約，也歡迎一起走更遠</h2>
+  </div>
+  <div class="more-grid">
+    <a class="more-card" href="https://imhere-landing.vercel.app/#training" target="_blank" rel="noopener">
+      <h3>專業音療師培訓</h3>
+      <p>三階課程：頌缽基礎與自我療癒 → 身體振動療癒 → 全脈輪與團體音療。零基礎也能開始，一路走到能獨立帶領團體音療。</p>
+      <span class="more-go">了解課程與梯次 →</span>
+    </a>
+    <a class="more-card" href="https://imhere-landing.vercel.app/#events" target="_blank" rel="noopener">
+      <h3>主題活動・團體聲浴</h3>
+      <p>不定期推出團體音療、臼井靈氣頌缽聲浴等主題場次，和大家一起在聲音裡好好休息。</p>
+      <span class="more-go">看近期場次 →</span>
+    </a>
+  </div>
+</section>
+
 <footer>
   <div class="fb">I'm here 有我在療癒所</div>
   337 桃園市大園區青山里致祥一街 95 號 2 樓　·　LINE @933jczxb　·　IG @im_here_healingspace
@@ -357,7 +384,7 @@ const CONFIG = {
   brand: "I'm here 有我在療癒所",
   liffId: "2010483817-ECzJ2F7B",    // LINE LIFF ID（客戶 Provider「有我在療癒所」下，2026-06-23 搬遷）
   apiUrl: "https://script.google.com/macros/s/AKfycbwGPAtLM51TuTa4hjOhU37gJ76yOEwxoNpdEf6MR5WrJaJy4W3shL2pNLqmx8iml5Yt/exec",
-  lineOaUrl: "https://line.me/R/ti/p/@933jczxb",
+  lineOaUrl: "https://lin.ee/YvD0ZR6",   // 官方帳號 @933jczxb 的加好友短連結（與官網一致）
   // 營業時間：0=週日 … 6=週六；null=公休
   hours: {
     0:{open:"10:00",close:"21:00"}, 1:{open:"10:00",close:"21:00"}, 2:{open:"10:00",close:"21:00"},
