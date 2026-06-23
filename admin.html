@@ -216,7 +216,7 @@ async function loadAll(){
     render();
   }catch(e){$("#view").innerHTML='<div class="empty">連線失敗：'+e.message+'</div>';}
 }
-function defaultConfig(){const h={};for(let i=0;i<7;i++)h[i]={open:"11:00",close:"20:00"};const p={};SERVICES.forEach(s=>p[s.id]=s.price);return{hours:h,prices:p,closedDates:[]};}
+function defaultConfig(){const h={};for(let i=0;i<7;i++)h[i]={open:"10:00",close:"21:00"};const p={};SERVICES.forEach(s=>p[s.id]=s.price);return{hours:h,prices:p,closedDates:[]};}
 function render(){({dash:renderDash,report:renderReport,cal:renderCal,book:renderBook,ledger:renderLedger,set:renderSet,staff:renderStaff}[TAB])();}
 
 /* ===== 總覽 ===== */
