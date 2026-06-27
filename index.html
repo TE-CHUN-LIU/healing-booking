@@ -102,10 +102,18 @@ body{font-family:"Noto Sans TC",system-ui,sans-serif;color:var(--ink);background
 .main .panel:nth-of-type(4) .p-num{background:var(--gold);color:#4a3508}
 
 /* category tabs */
-.cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-.cat{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:8px 16px;font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s;font-family:inherit;color:var(--ink-soft)}
+.cats-hint{font-size:13px;color:var(--ink-soft);margin:-6px 0 14px;display:flex;align-items:center;gap:6px}
+.cats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.cat{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:13px 16px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s;font-family:inherit;color:var(--ink-soft);text-align:center}
 .cat:hover{border-color:var(--accent)}
 .cat.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+@media (prefers-reduced-motion:no-preference){
+  .cats.guide .cat{animation:catPulse 1.7s ease 3}
+  .cats.guide .cat:nth-child(2){animation-delay:.12s}
+  .cats.guide .cat:nth-child(3){animation-delay:.24s}
+  .cats.guide .cat:nth-child(4){animation-delay:.36s}
+  @keyframes catPulse{0%,100%{box-shadow:0 0 0 0 rgba(194,96,63,0)}50%{box-shadow:0 0 0 5px rgba(194,96,63,.18)}}
+}
 
 /* service cards */
 .services{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -273,7 +281,8 @@ footer .fb{font-family:"Fraunces",serif;font-size:17px;color:var(--ink);margin-b
       <!-- 1 選服務 -->
       <section class="panel" id="p1">
         <div class="p-head"><span class="p-num">1</span><span class="p-title">選擇服務</span></div>
-        <div class="cats" id="cats"></div>
+        <p class="cats-hint">👇 先點選服務類別，下方會出現可預約的項目</p>
+        <div class="cats guide" id="cats"></div>
         <div class="services" id="services"></div>
       </section>
 
@@ -460,7 +469,7 @@ async function initLiff(){
    ============================================================ */
 function renderCats(){
   $("#cats").innerHTML=CONFIG.categories.map(c=>`<button class="cat${c.key===state.cat?' on':''}" data-c="${c.key}">${c.name}</button>`).join("");
-  $$("#cats .cat").forEach(b=>b.onclick=()=>{state.cat=b.dataset.c;renderCats();renderServices();});
+  $$("#cats .cat").forEach(b=>b.onclick=()=>{state.cat=b.dataset.c;$("#cats").classList.remove("guide");renderCats();renderServices();});
 }
 function renderServices(){
   const list=CONFIG.services.filter(s=>s.cat===state.cat);
