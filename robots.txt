@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 
-Sitemap: https://healing-booking.vercel.app/sitemap.xml
+Sitemap: https://book.im-here-healingspace.com/sitemap.xml
